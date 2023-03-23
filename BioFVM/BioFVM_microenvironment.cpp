@@ -196,6 +196,11 @@ void Microenvironment::add_dirichlet_node( int voxel_index, std::vector<double>&
 	*/
 	
 	dirichlet_value_vectors[voxel_index] = value; // .assign( mesh.voxels.size(), one ); 
+    std::cout << " exit from Microenvironment::add_dirichlet_node( int voxel_index, std::vector<double>& value )\n";
+    // exit(-1);
+    // double foo = 1.0/0.0;
+    std::cout << "force segfault in Microenvironment::add_dirichlet_node( int voxel_index, std::vector<double>& value )\n";
+    *(int*)0 = 0;
 	
 	return; 
 }
@@ -204,6 +209,8 @@ void Microenvironment::update_dirichlet_node( int voxel_index , std::vector<doub
 {
 	mesh.voxels[voxel_index].is_Dirichlet = true; 
 	dirichlet_value_vectors[voxel_index] = new_value; 
+    std::cout << " exit from Microenvironment::update_dirichlet_node( int voxel_index, std::vector<double>& new_value )\n";
+    exit(-1);
 	
 	return; 
 }
@@ -381,6 +388,8 @@ void Microenvironment::resize_voxels( int new_number_of_voxes )
 	gradient_vector_computed.resize( mesh.voxels.size() , false ); 	
 	
 	dirichlet_value_vectors.assign( mesh.voxels.size(), one ); 
+    std::cout << " exit from Microenvironment::resize_voxels( int new_number_of_voxes )\n";
+    exit(-1);
 
 	dirichlet_activation_vectors.assign( mesh.voxels.size() , dirichlet_activation_vector ); 
 	
@@ -407,6 +416,8 @@ void Microenvironment::resize_space( int x_nodes, int y_nodes, int z_nodes )
 	gradient_vector_computed.resize( mesh.voxels.size() , false ); 	
 	
 	dirichlet_value_vectors.assign( mesh.voxels.size(), one ); 
+    std::cout << " exit from Microenvironment::resize_space( int, int, int )\n";
+    exit(-1);
 	
 	dirichlet_activation_vectors.assign( mesh.voxels.size() , dirichlet_activation_vector ); 
 	
@@ -432,6 +443,8 @@ void Microenvironment::resize_space( double x_start, double x_end, double y_star
 	gradient_vector_computed.resize( mesh.voxels.size() , false ); 	
 
 	dirichlet_value_vectors.assign( mesh.voxels.size(), one ); 
+    std::cout << " exit from Microenvironment::resize_space( #2 )\n";
+    exit(-1);
 	
 	dirichlet_activation_vectors.assign( mesh.voxels.size() , dirichlet_activation_vector ); 	
 	
@@ -457,6 +470,14 @@ void Microenvironment::resize_space( double x_start, double x_end, double y_star
 	gradient_vector_computed.resize( mesh.voxels.size() , false ); 	
 	
 	dirichlet_value_vectors.assign( mesh.voxels.size(), one ); 
+    std::cout << " exit from Microenvironment::resize_space( #3 )\n";
+    // exit(-1);
+    std::cout << "-------- after resize_space #3:" << std::endl;
+    for (int idx=0; idx<microenvironment.number_of_voxels(); idx++)
+    {
+        std::cout << "dirichlet_value_vectors["<<idx<<"][0]= " << microenvironment.dirichlet_value_vectors[idx][0] << std::endl; 
+        std::cout << "dirichlet_value_vectors["<<idx<<"][1]= " << microenvironment.dirichlet_value_vectors[idx][1] << std::endl; 
+    }
 
 	dirichlet_activation_vectors.assign( mesh.voxels.size() , dirichlet_activation_vector ); 
 	
