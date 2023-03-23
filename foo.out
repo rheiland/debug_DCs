@@ -1,0 +1,1241 @@
+Using config file ./config/PhysiCell_settings.xml ... 
+1
+dc? 1
+User parameters in XML config file: 
+Bool parameters:: 
+
+Int parameters:: 
+random_seed: 0 [dimensionless]
+number_of_cells: 1 [none]
+
+Double parameters:: 
+div_initialization: 0 [dimensionless]
+
+String parameters:: 
+
+
+  ------ setup_microenvironment()
+which boundaries?
+1 1 1 1 1 1
+
+Microenvironment summary: microenvironment: 
+
+Mesh information: 
+type: uniform Cartesian
+Domain: [-30,30] micron x [-30,30] micron x [-10,10] micron
+   resolution: dx = 20 micron
+   voxels: 9
+   voxel faces: 0
+   volume: 72000 cubic micron
+Densities: (2 total)
+   oxygen:
+     units: dimensionless
+     diffusion coefficient: 100000 micron^2 / min
+     decay rate: 0 min^-1
+     diffusion length scale: 3.16228e+08 micron
+     initial condition: 38 dimensionless
+     boundary condition: 38 dimensionless (enabled: true)
+   glucose:
+     units: dimensionless
+     diffusion coefficient: 100000 micron^2 / min
+     decay rate: 10 min^-1
+     diffusion length scale: 100 micron
+     initial condition: 0 dimensionless
+     boundary condition: 0 dimensionless (enabled: false)
+
+  -- after  initialize_microenvironment()
+------- dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 0
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  0
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 0
+1) 38, 0
+2) 38, 0
+3) 38, 0
+4) 38, 0
+5) 38, 0
+6) 38, 0
+7) 38, 0
+8) 38, 0
+ --------------
+
+  oxygen index= 0
+  glucose index= 1
+
+
+ oxy (pre-  update_dirichlet_node( 4 , 1 , 42 )):
+  get_substrate_dirichlet_activation(0,4)= 1
+  get_substrate_dirichlet_activation(0,3)= 1
+
+-------- update_dirichlet_node
+-------- before assignment:
+dirichlet_value_vectors[0][0]= 38
+dirichlet_value_vectors[0][1]= 0
+dirichlet_value_vectors[1][0]= 38
+dirichlet_value_vectors[1][1]= 0
+dirichlet_value_vectors[2][0]= 38
+dirichlet_value_vectors[2][1]= 0
+dirichlet_value_vectors[3][0]= 38
+dirichlet_value_vectors[3][1]= 0
+dirichlet_value_vectors[4][0]= 1
+dirichlet_value_vectors[4][1]= 1
+dirichlet_value_vectors[5][0]= 38
+dirichlet_value_vectors[5][1]= 0
+dirichlet_value_vectors[6][0]= 38
+dirichlet_value_vectors[6][1]= 0
+dirichlet_value_vectors[7][0]= 38
+dirichlet_value_vectors[7][1]= 0
+dirichlet_value_vectors[8][0]= 38
+dirichlet_value_vectors[8][1]= 0
+-------- after assignment:
+dirichlet_value_vectors[0][0]= 38
+dirichlet_value_vectors[0][1]= 0
+dirichlet_value_vectors[1][0]= 38
+dirichlet_value_vectors[1][1]= 0
+dirichlet_value_vectors[2][0]= 38
+dirichlet_value_vectors[2][1]= 0
+dirichlet_value_vectors[3][0]= 38
+dirichlet_value_vectors[3][1]= 0
+dirichlet_value_vectors[4][0]= 1
+dirichlet_value_vectors[4][1]= 42
+dirichlet_value_vectors[5][0]= 38
+dirichlet_value_vectors[5][1]= 0
+dirichlet_value_vectors[6][0]= 38
+dirichlet_value_vectors[6][1]= 0
+dirichlet_value_vectors[7][0]= 38
+dirichlet_value_vectors[7][1]= 0
+dirichlet_value_vectors[8][0]= 38
+dirichlet_value_vectors[8][1]= 0
+  -- after  update_dirichlet_node( 4 , 1 , 42 )
+------- dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 0
+1) 38, 0
+2) 38, 0
+3) 38, 0
+4) 38, 0
+5) 38, 0
+6) 38, 0
+7) 38, 0
+8) 38, 0
+ --------------
+oxy:
+  get_substrate_dirichlet_activation(0,4)= 1
+  get_substrate_dirichlet_activation(0,3)= 1
+
+glu:
+  get_substrate_dirichlet_activation(1,4)= 1
+  get_substrate_dirichlet_activation(1,3)= 0
+-- exit setup_microenv
+main.cpp: post-microenvironment.number_of_densities()  = 2
+virtual_wall_at_domain_edge: enabled
+Pre-processing type 0 named default
+Processing default ... 
+Note: setting cell definition to 2D based on microenvironment domain settings ... 
+  --------- attachment_elastic_constant = 0.01
+Signals: 
+=======
+0 : oxygen
+1 : glucose
+2 : intracellular oxygen
+3 : intracellular glucose
+4 : oxygen gradient
+5 : glucose gradient
+6 : pressure
+7 : volume
+8 : contact with default
+9 : contact with live cell
+10 : contact with dead cell
+11 : contact with basement membrane
+12 : damage
+13 : dead
+14 : total attack time
+15 : time
+16 : custom:sample
+17 : apoptotic
+18 : necrotic
+
+
+Behaviors: 
+=========
+0 : oxygen secretion
+1 : glucose secretion
+2 : oxygen secretion target
+3 : glucose secretion target
+4 : oxygen uptake
+5 : glucose uptake
+6 : oxygen export
+7 : glucose export
+8 : cycle entry
+9 : exit from cycle phase 1
+10 : exit from cycle phase 2
+11 : exit from cycle phase 3
+12 : exit from cycle phase 4
+13 : exit from cycle phase 5
+14 : apoptosis
+15 : necrosis
+16 : migration speed
+17 : migration bias
+18 : migration persistence time
+19 : chemotactic response to oxygen
+20 : chemotactic response to glucose
+21 : cell-cell adhesion
+22 : cell-cell adhesion elastic constant
+23 : adhesive affinity to default
+24 : relative maximum adhesion distance
+25 : cell-cell repulsion
+26 : cell-BM adhesion
+27 : cell-BM repulsion
+28 : phagocytose dead cell
+29 : phagocytose default
+30 : attack default
+31 : fuse to default
+32 : transform to default
+33 : custom:sample
+34 : is_movable
+35 : immunogenicity to default
+36 : cell attachment rate
+37 : cell detachment rate
+38 : maximum number of cell attachments
+
+
+0 :: type:0 name: default
+	 cycle model: Flow cytometry model (separated) (code=6)
+		Phase 0: G0/G1
+		Phase 1: S
+		Phase 2: G2
+		Phase 3: M
+		Cycle transitions: 
+		-----------------
+		G0/G1 --> S w mean duration 300 min
+		S --> G2 w mean duration 480 min
+		G2 --> M w mean duration 240 min
+		M --> G0/G1 w mean duration 60 min
+	 death models: 
+		0 : Apoptosis (code=100) with rate 5.31667e-05 1/min
+		death phase transitions: 
+		------------------------
+		Apoptotic --> Debris w mean duration 516 min
+		1 : Necrosis (code=101) with rate 0 1/min
+		death phase transitions: 
+		------------------------
+		Necrotic (swelling) --> Necrotic (lysed) w mean duration 1e-16 min
+		Necrotic (lysed) --> Debris w mean duration 86400 min
+	 key functions: 
+		 migration bias rule: false
+		 custom rule: true
+		 phenotype rule: true
+		 volume update function: true
+		 mechanics function: true
+		 contact function: true
+	motility (enabled: false in 2D)
+		speed: 1 micron/min
+		bias: 0.5 
+		persistence time: 1 min
+		chemotaxis (enabled: false)
+			along 1 * grad(oxygen) 
+	mechanics:
+		cell_cell_adhesion_strength: 0.4
+		cell_cell_repulsion_strength: 10
+		rel max adhesion dist: 1.25
+		cell_BM_adhesion_strength: 4
+		cell_BM_repulsion_strength: 10
+		attachment_elastic_constant: 0.01
+		attachment_rate: 0
+		detachment_rate: 0
+	custom data: 
+		sample: 1 dimensionless
+	custom vector data: 
+			NOTE: custom vector data will eventually be merged with custom data
+Placing cells of type default ... 
+
+Using PhysiCell version 1.11.0
+	Please cite DOI: 10.1371/journal.pcbi.1005991
+	Project website: http://PhysiCell.MathCancer.org
+
+See ALL_CITATIONS.txt for this list.
+current simulated time: 0 min (max: 12 min)
+total agents: 1
+interval wall time: 0 days, 0 hours, 0 minutes, and 1.9e-05 seconds 
+total wall time: 0 days, 0 hours, 0 minutes, and 2.3e-05 seconds 
+
+------- dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 0
+1) 38, 0
+2) 38, 0
+3) 38, 0
+4) 38, 0
+5) 38, 0
+6) 38, 0
+7) 38, 0
+8) 38, 0
+ --------------
+
+
+---------- ./BioFVM/BioFVM_solvers.cpp : diffusion_decay_solver__constant_coefficients_LOD_2D
+
+Using method diffusion_decay_solver__constant_coefficients_LOD_2D (2D LOD with Thomas Algorithm) ... 
+
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------ Microenvironment::apply_dirichlet_conditions( void ) ---------
+ --- entry
+--current_time= 0
+------- BioFVM_microenv...  dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 0
+1) 38, 0
+2) 38, 0
+3) 38, 0
+4) 38, 0
+5) 38, 0
+6) 38, 0
+7) 38, 0
+8) 38, 0
+ --------------
+voxel i= 0
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 1
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 2
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 3
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 4
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 1
+    j=1,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 42
+voxel i= 5
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 6
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 7
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 8
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+ --- exit
+------- BioFVM_microenv...  dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 0
+1) 38, 0
+2) 38, 0
+3) 38, 0
+4) 1, 42
+5) 38, 0
+6) 38, 0
+7) 38, 0
+8) 38, 0
+ --------------
+ --- sys exit in Microenvironment::apply_dirichlet_conditions()
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------ Microenvironment::apply_dirichlet_conditions( void ) ---------
+ --- entry
+--current_time= 0
+------- BioFVM_microenv...  dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 0
+1) 38, 0
+2) 38, 0
+3) 27.1176, 11.6959
+4) 22.7647, 16.6082
+5) 27.1176, 11.6959
+6) 38, 0
+7) 38, 0
+8) 38, 0
+ --------------
+voxel i= 0
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 1
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 2
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 3
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 4
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 1
+    j=1,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 42
+voxel i= 5
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 6
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 7
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 8
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+ --- exit
+------- BioFVM_microenv...  dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 0
+1) 38, 0
+2) 38, 0
+3) 38, 11.6959
+4) 1, 42
+5) 38, 11.6959
+6) 38, 0
+7) 38, 0
+8) 38, 0
+ --------------
+ --- sys exit in Microenvironment::apply_dirichlet_conditions()
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------ Microenvironment::apply_dirichlet_conditions( void ) ---------
+ --- entry
+--current_time= 0
+------- BioFVM_microenv...  dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 3.25701
+1) 27.1176, 11.6959
+2) 38, 3.25701
+3) 38, 4.62495
+4) 22.7647, 16.6082
+5) 38, 4.62495
+6) 38, 3.25701
+7) 27.1176, 11.6959
+8) 38, 3.25701
+ --------------
+voxel i= 0
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 1
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 2
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 3
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 4
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 1
+    j=1,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 42
+voxel i= 5
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 6
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 7
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 8
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+ --- exit
+------- BioFVM_microenv...  dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 3.25701
+1) 38, 11.6959
+2) 38, 3.25701
+3) 38, 4.62495
+4) 1, 42
+5) 38, 4.62495
+6) 38, 3.25701
+7) 38, 11.6959
+8) 38, 3.25701
+ --------------
+ --- sys exit in Microenvironment::apply_dirichlet_conditions()
+
+
+---------- ./BioFVM/BioFVM_solvers.cpp : diffusion_decay_solver__constant_coefficients_LOD_2D
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------ Microenvironment::apply_dirichlet_conditions( void ) ---------
+ --- entry
+--current_time= 0.01
+------- BioFVM_microenv...  dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 3.25701
+1) 38, 11.6959
+2) 38, 3.25701
+3) 38, 4.62495
+4) 1, 42
+5) 38, 4.62495
+6) 38, 3.25701
+7) 38, 11.6959
+8) 38, 3.25701
+ --------------
+voxel i= 0
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 1
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 2
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 3
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 4
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 1
+    j=1,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 42
+voxel i= 5
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 6
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 7
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 8
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+ --- exit
+------- BioFVM_microenv...  dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 3.25701
+1) 38, 11.6959
+2) 38, 3.25701
+3) 38, 4.62495
+4) 1, 42
+5) 38, 4.62495
+6) 38, 3.25701
+7) 38, 11.6959
+8) 38, 3.25701
+ --------------
+ --- sys exit in Microenvironment::apply_dirichlet_conditions()
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------ Microenvironment::apply_dirichlet_conditions( void ) ---------
+ --- entry
+--current_time= 0.01
+------- BioFVM_microenv...  dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 5.45192
+1) 38, 6.43893
+2) 38, 5.45192
+3) 27.1176, 14.8127
+4) 22.7647, 19.184
+5) 27.1176, 14.8127
+6) 38, 5.45192
+7) 38, 6.43893
+8) 38, 5.45192
+ --------------
+voxel i= 0
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 1
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 2
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 3
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 4
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 1
+    j=1,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 42
+voxel i= 5
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 6
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 7
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 8
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+ --- exit
+------- BioFVM_microenv...  dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 5.45192
+1) 38, 6.43893
+2) 38, 5.45192
+3) 38, 14.8127
+4) 1, 42
+5) 38, 14.8127
+6) 38, 5.45192
+7) 38, 6.43893
+8) 38, 5.45192
+ --------------
+ --- sys exit in Microenvironment::apply_dirichlet_conditions()
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------ Microenvironment::apply_dirichlet_conditions( void ) ---------
+ --- entry
+--current_time= 0.01
+------- BioFVM_microenv...  dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 7.79904
+1) 27.1176, 16.0351
+2) 38, 7.79904
+3) 38, 8.89387
+4) 22.7647, 20.1943
+5) 38, 8.89387
+6) 38, 7.79904
+7) 27.1176, 16.0351
+8) 38, 7.79904
+ --------------
+voxel i= 0
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 1
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 2
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 3
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 4
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 1
+    j=1,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 42
+voxel i= 5
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 6
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 7
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 8
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+ --- exit
+------- BioFVM_microenv...  dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 7.79904
+1) 38, 16.0351
+2) 38, 7.79904
+3) 38, 8.89387
+4) 1, 42
+5) 38, 8.89387
+6) 38, 7.79904
+7) 38, 16.0351
+8) 38, 7.79904
+ --------------
+ --- sys exit in Microenvironment::apply_dirichlet_conditions()
+
+
+---------- ./BioFVM/BioFVM_solvers.cpp : diffusion_decay_solver__constant_coefficients_LOD_2D
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------ Microenvironment::apply_dirichlet_conditions( void ) ---------
+ --- entry
+--current_time= 0.02
+------- BioFVM_microenv...  dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 7.79904
+1) 38, 16.0351
+2) 38, 7.79904
+3) 38, 8.89387
+4) 1, 42
+5) 38, 8.89387
+6) 38, 7.79904
+7) 38, 16.0351
+8) 38, 7.79904
+ --------------
+voxel i= 0
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 1
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 2
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 3
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 4
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 1
+    j=1,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 42
+voxel i= 5
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 6
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 7
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+voxel i= 8
+   voxels[i].is_Dirichlet= True
+    j=0,   dirichlet_activation_vectors[i][j] == true; density_vector(i)[j]= 38
+ --- exit
+------- BioFVM_microenv...  dump_DC_info() ----------
+mesh.voxels[0] is_Dirichlet= 1
+mesh.voxels[1] is_Dirichlet= 1
+mesh.voxels[2] is_Dirichlet= 1
+mesh.voxels[3] is_Dirichlet= 1
+mesh.voxels[4] is_Dirichlet= 1
+mesh.voxels[5] is_Dirichlet= 1
+mesh.voxels[6] is_Dirichlet= 1
+mesh.voxels[7] is_Dirichlet= 1
+mesh.voxels[8] is_Dirichlet= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 0
+0) activation= 1
+1) activation= 1
+2) activation= 1
+3) activation= 1
+4) activation= 1
+5) activation= 1
+6) activation= 1
+7) activation= 1
+8) activation= 1
+
+------- get_substrate_dirichlet_activation(idx_substrate, idx_voxel): substrate= 1
+0) activation=  0
+1) activation=  0
+2) activation=  0
+3) activation=  0
+4) activation=  1
+5) activation=  0
+6) activation=  0
+7) activation=  0
+8) activation=  0
+
+  oxy, glu 
+0) 38, 7.79904
+1) 38, 16.0351
+2) 38, 7.79904
+3) 38, 8.89387
+4) 1, 42
+5) 38, 8.89387
+6) 38, 7.79904
+7) 38, 16.0351
+8) 38, 7.79904
+ --------------
+ --- sys exit in Microenvironment::apply_dirichlet_conditions()
+ --- exiting at current_time > 0.01

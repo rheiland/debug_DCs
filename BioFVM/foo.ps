@@ -1,0 +1,1702 @@
+%!PS-Adobe-
+%%DocumentFonts: Courier Courier-Bold
+% PSP prologue file, version 1.0
+%
+% Copyright (c) 1989 Eric J. Kostelich
+%
+save
+/PSPstart {} def
+/p {	3 1 roll
+	Linespacing mul Textoffset exch sub
+	exch Textwidth Leftmargin add mul Leftmargin add
+	exch moveto show 
+} def
+
+/Setbold { /Courier-Bold findfont Boldsize scalefont setfont } def
+/SF { /Courier findfont Pointsize scalefont setfont } def
+%
+% (string) H  - for placing boldface titles
+%
+/H { Setbold Leftmargin Titleoffset moveto show SF } def
+%
+%  Normal mode - use titles, 54 lines/page
+%
+/Usual {/Leftmargin 66 def  /Textoffset 708 def /Titleoffset 738 def
+	/Boldsize 12 def  /Pointsize 10 def /Linespacing 12 def
+	/Textwidth 480 def /Rotatemode false def
+} def
+%
+%  Plain mode - no titles, 66 lines/page
+%
+/Plain {/Leftmargin 72 def  /Textoffset 756 def
+	/Boldsize 14 def  /Pointsize 9 def /Linespacing 11 def
+	/Textwidth 480 def /Rotatemode false def
+} def
+%
+% Rotated, two-column mode - 65 lines/column
+%
+/Rotated { /Rotatemode true def } def
+/Rotatepage { 612 0 translate 90 rotate
+	/Leftmargin 36 def /Textoffset 550 def /Titleoffset 568 def
+	/Boldsize 12 def  /Pointsize 7 def  /Linespacing 8 def
+	/Textwidth 336 def
+} def
+/Startpage { Rotatemode {Rotatepage} if SF } def
+/Endpage {showpage} def
+/PSPend {restore} def
+%%EndPrologue
+Usual
+%%Page 1 1
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+       1)H
+0 0(/*)p
+0 1(#############################################################################)p
+0 2(# If you use BioFVM in your project, please cite BioFVM and the version     #)p
+0 3(# number, such as below:                                                    #)p
+0 4(#                                                                           #)p
+0 5(# We solved the diffusion equations using BioFVM \(Version 1.1.7\) [1]        #)p
+0 6(#                                                                           #)p
+0 7(# [1] A. Ghaffarizadeh, S.H. Friedman, and P. Macklin, BioFVM: an efficient #)p
+0 8(#    parallelized diffusive transport solver for 3-D biological simulations,#)p
+0 9(#    Bioinformatics 32\(8\): 1256-8, 2016. DOI: 10.1093/bioinformatics/btv730 #)p
+0 10(#                                                                           #)p
+0 11(#############################################################################)p
+0 12(#                                                                           #)p
+0 13(# BSD 3-Clause License \(see https://opensource.org/licenses/BSD-3-Clause\)   #)p
+0 14(#                                                                           #)p
+0 15(# Copyright \(c\) 2015-2017, Paul Macklin and the BioFVM Project              #)p
+0 16(# All rights reserved.                                                      #)p
+0 17(#                                                                           #)p
+0 18(# Redistribution and use in source and binary forms, with or without        #)p
+0 19(# modification, are permitted provided that the following conditions are    #)p
+0 20(# met:                                                                      #)p
+0 21(#                                                                           #)p
+0 22(# 1. Redistributions of source code must retain the above copyright notice, #)p
+0 23(# this list of conditions and the following disclaimer.                     #)p
+0 24(#                                                                           #)p
+0 25(# 2. Redistributions in binary form must reproduce the above copyright      #)p
+0 26(# notice, this list of conditions and the following disclaimer in the       #)p
+0 27(# documentation and/or other materials provided with the distribution.      #)p
+0 28(#                                                                           #)p
+0 29(# 3. Neither the name of the copyright holder nor the names of its          #)p
+0 30(# contributors may be used to endorse or promote products derived from this #)p
+0 31(# software without specific prior written permission.                       #)p
+0 32(#                                                                           #)p
+0 33(# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS       #)p
+0 34(# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED #)p
+0 35(# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A           #)p
+0 36(# PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER #)p
+0 37(# OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,  #)p
+0 38(# EXEMPLARY, OR CONSEQUENTIAL DAMAGES \(INCLUDING, BUT NOT LIMITED TO,       #)p
+0 39(# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR        #)p
+0 40(# PROFITS; OR BUSINESS INTERRUPTION\) HOWEVER CAUSED AND ON ANY THEORY OF    #)p
+0 41(# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT \(INCLUDING      #)p
+0 42(# NEGLIGENCE OR OTHERWISE\) ARISING IN ANY WAY OUT OF THE USE OF THIS        #)p
+0 43(# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.              #)p
+0 44(#                                                                           #)p
+0 45(#############################################################################)p
+0 46(*/)p
+0 48(#include "BioFVM_microenvironment.h")p
+0 49(#include "BioFVM_solvers.h")p
+0 50(#include "BioFVM_vector.h")p
+0 51(#include <cmath>)p
+0 53(#include "BioFVM_basic_agent.h")p
+Endpage
+%%Page 2 2
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+       2)H
+0 1(namespace BioFVM{)p
+0 3(extern std::string BioFVM_version;)p
+0 4(extern std::string BioFVM_URL;)p
+0 6(Microenvironment* default_microenvironment = NULL;)p
+0 8(void set_default_microenvironment\( Microenvironment* M \))p
+0 9({ default_microenvironment = M; })p
+0 10(Microenvironment* get_default_microenvironment\( void \))p
+0 11({ return default_microenvironment; })p
+0 13(void zero_function\( std::vector<double>& position, std::vector<double>& input ,)p
+0 14(std::vector<double>* write_destination \))p
+0 15({)p
+0 16(        for\( unsigned int i=0 ; i < write_destination->size\(\) ; i++ \))p
+0 17(        { \(*write_destination\)[i] = 0.0; })p
+0 18(        return;)p
+0 19(})p
+0 21(void one_function\( std::vector<double>& position, std::vector<double>& input , s)p
+0 22(td::vector<double>* write_destination \))p
+0 23({)p
+0 24(        for\( unsigned int i=0 ; i < write_destination->size\(\) ; i++ \))p
+0 25(        { \(*write_destination\)[i] = 1.0; })p
+0 26(        return;)p
+0 27(})p
+0 29(void zero_function\( Microenvironment* pMicroenvironment, int voxel_index, std::v)p
+0 30(ector<double>* write_destination \))p
+0 31({)p
+0 32(        for\( unsigned int i=0 ; i < write_destination->size\(\) ; i++ \))p
+0 33(        { \(*write_destination\)[i] = 0.0; })p
+0 34(        return;)p
+0 35(})p
+0 37(void one_function\( Microenvironment* pMicroenvironment, int voxel_index, std::ve)p
+0 38(ctor<double>* write_destination \))p
+0 39({)p
+0 40(        for\( unsigned int i=0 ; i < write_destination->size\(\) ; i++ \))p
+0 41(        { \(*write_destination\)[i] = 1.0; })p
+0 42(        return;)p
+0 43(})p
+0 45(void empty_diffusion_solver\( Microenvironment& S, double dt \))p
+0 46({)p
+0 47(        static bool setup_done = false;)p
+0 48(        if\( !setup_done \))p
+0 49(        {)p
+0 50(                std::cout << "Using the empty diffusion solver ... " << std::end)p
+0 51(l;)p
+0 52(                setup_done = true;)p
+0 53(        })p
+Endpage
+%%Page 3 3
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+       3)H
+0 1(        return;)p
+0 2(})p
+0 4(Microenvironment::Microenvironment\(\))p
+0 5({)p
+0 6(        name = "unnamed";)p
+0 7(        spatial_units = "none";)p
+0 8(        time_units = "none";)p
+0 10(        bulk_source_sink_solver_setup_done = false;)p
+0 11(        thomas_setup_done = false;)p
+0 12(        diffusion_solver_setup_done = false;)p
+0 14(        diffusion_decay_solver = empty_diffusion_solver;)p
+0 15(        diffusion_decay_solver = diffusion_decay_solver__constant_coefficients_L)p
+0 16(OD_3D;)p
+0 18(        mesh.resize\(1,1,1\);)p
+0 20(        one.resize\( 1 , 1.0 \);)p
+0 21(        zero.resize\( 1 , 0.0 \);)p
+0 23(        temporary_density_vectors1.resize\( mesh.voxels.size\(\) , zero \);)p
+0 24(        temporary_density_vectors2.resize\( mesh.voxels.size\(\) , zero \);)p
+0 25(        p_density_vectors = &temporary_density_vectors1;)p
+0 27(        gradient_vectors.resize\( mesh.voxels.size\(\) \);)p
+0 28(        for\( unsigned int k=0 ; k < mesh.voxels.size\(\) ; k++ \))p
+0 29(        {)p
+0 30(                gradient_vectors[k].resize\( 1 \);)p
+0 31(                \(gradient_vectors[k]\)[0].resize\( 3, 0.0 \);)p
+0 32(        })p
+0 33(        gradient_vector_computed.resize\( mesh.voxels.size\(\) , false \);)p
+0 35(        bulk_supply_rate_function = zero_function;)p
+0 36(        bulk_supply_target_densities_function = zero_function;)p
+0 37(        bulk_uptake_rate_function = zero_function;)p
+0 39(        density_names.assign\( 1 , "unnamed" \);)p
+0 40(        density_units.assign\( 1 , "none" \);)p
+0 42(        diffusion_coefficients.assign\( number_of_densities\(\) , 0.0 \);)p
+0 43(        decay_rates.assign\( number_of_densities\(\) , 0.0 \);)p
+0 45(        one_half = one;)p
+0 46(        one_half *= 0.5;)p
+0 48(        one_third = one;)p
+0 49(        one_third /= 3.0;)p
+0 51(        dirichlet_value_vectors.assign\( mesh.voxels.size\(\), one \);)p
+0 52(        dirichlet_activation_vector.assign\( 1 , true \);)p
+Endpage
+%%Page 4 4
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+       4)H
+0 0(        dirichlet_activation_vectors.assign\( 1 , dirichlet_activation_vector \);)p
+0 2(        default_microenvironment_options.Dirichlet_all.assign\( 1 , true \);)p
+0 3(        default_microenvironment_options.Dirichlet_xmin.assign\( 1 , false \);)p
+0 4(        default_microenvironment_options.Dirichlet_xmax.assign\( 1 , false \);)p
+0 5(        default_microenvironment_options.Dirichlet_ymin.assign\( 1 , false \);)p
+0 6(        default_microenvironment_options.Dirichlet_ymax.assign\( 1 , false \);)p
+0 7(        default_microenvironment_options.Dirichlet_zmin.assign\( 1 , false \);)p
+0 8(        default_microenvironment_options.Dirichlet_zmax.assign\( 1 , false \);)p
+0 10(        default_microenvironment_options.Dirichlet_xmin_values.assign\( 1 , 1.0 \))p
+0 11(;)p
+0 12(        default_microenvironment_options.Dirichlet_xmax_values.assign\( 1 , 1.0 \))p
+0 13(;)p
+0 14(        default_microenvironment_options.Dirichlet_ymin_values.assign\( 1 , 1.0 \))p
+0 15(;)p
+0 16(        default_microenvironment_options.Dirichlet_ymax_values.assign\( 1 , 1.0 \))p
+0 17(;)p
+0 18(        default_microenvironment_options.Dirichlet_zmin_values.assign\( 1 , 1.0 \))p
+0 19(;)p
+0 20(        default_microenvironment_options.Dirichlet_zmax_values.assign\( 1 , 1.0 \))p
+0 21(;)p
+0 23(        if\(default_microenvironment==NULL\))p
+0 24(        { default_microenvironment=this; })p
+0 26(        return;)p
+0 27(})p
+0 29(Microenvironment::Microenvironment\(std::string name\))p
+0 30({)p
+0 31(        Microenvironment\(\);)p
+0 32(        this->name=name;)p
+0 34(        return;)p
+0 35(})p
+0 37(void Microenvironment::add_dirichlet_node\( int voxel_index, std::vector<double>&)p
+0 38( value \))p
+0 39({)p
+0 40(        mesh.voxels[voxel_index].is_Dirichlet=true;)p
+0 41(        /*)p
+0 42(        dirichlet_indices.push_back\( voxel_index \);)p
+0 43(        dirichlet_value_vectors.push_back\( value \);)p
+0 44(        */)p
+0 46(        dirichlet_value_vectors[voxel_index] = value; // .assign\( mesh.voxels.si)p
+0 47(ze\(\), one \);)p
+0 49(        return;)p
+0 50(})p
+0 52(void Microenvironment::update_dirichlet_node\( int voxel_index , std::vector<doub)p
+0 53(le>& new_value \))p
+Endpage
+%%Page 5 5
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+       5)H
+0 0({)p
+0 1(        mesh.voxels[voxel_index].is_Dirichlet = true;)p
+0 2(        dirichlet_value_vectors[voxel_index] = new_value;)p
+0 4(        return;)p
+0 5(})p
+0 7(void Microenvironment::update_dirichlet_node\( int voxel_index , int substrate_in)p
+0 8(dex , double new_value \))p
+0 9({)p
+0 10(        mesh.voxels[voxel_index].is_Dirichlet = true;)p
+0 11(        dirichlet_value_vectors[voxel_index][substrate_index] = new_value;)p
+0 13(        dirichlet_activation_vectors[voxel_index][substrate_index] = true;)p
+0 15(        return;)p
+0 16(})p
+0 18(void Microenvironment::remove_dirichlet_node\( int voxel_index \))p
+0 19({)p
+0 20(        mesh.voxels[voxel_index].is_Dirichlet = false;)p
+0 22(        return;)p
+0 23(})p
+0 25(bool& Microenvironment::is_dirichlet_node\( int voxel_index \))p
+0 26({)p
+0 27(        return mesh.voxels[voxel_index].is_Dirichlet;)p
+0 28(})p
+0 30(void Microenvironment::set_substrate_dirichlet_activation\( int substrate_index ,)p
+0 31( bool new_value \))p
+0 32({)p
+0 33(        dirichlet_activation_vector[substrate_index] = new_value;)p
+0 35(        for\( int n = 0 ; n < mesh.voxels.size\(\) ; n++ \))p
+0 36(        { dirichlet_activation_vectors[n][substrate_index] = new_value; })p
+0 38(        return;)p
+0 39(})p
+0 41(void Microenvironment::set_substrate_dirichlet_activation\( int index, std::vecto)p
+0 42(r<bool>& new_value \))p
+0 43({)p
+0 44(        dirichlet_activation_vectors[index] = new_value;)p
+0 45(        return;)p
+0 46(})p
+0 49(bool Microenvironment::get_substrate_dirichlet_activation\( int substrate_index \))p
+0 50({)p
+0 51(        return dirichlet_activation_vector[substrate_index];)p
+0 52(})p
+Endpage
+%%Page 6 6
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+       6)H
+0 0(// new functions for finer-grained control of Dirichlet conditions -- 1.7.0)p
+0 2(void Microenvironment::set_substrate_dirichlet_activation\( int substrate_index ,)p
+0 3( int index, bool new_value \))p
+0 4({)p
+0 5(        dirichlet_activation_vectors[index][substrate_index] = new_value;)p
+0 6(        return;)p
+0 7(})p
+0 9(bool Microenvironment::get_substrate_dirichlet_activation\( int substrate_index,)p
+0 10(int index \))p
+0 11({ return dirichlet_activation_vectors[index][substrate_index]; })p
+0 13(void Microenvironment::apply_dirichlet_conditions\( void \))p
+0 14({)p
+0 15(        /*)p
+0 16(        #pragma omp parallel for)p
+0 17(        for\( unsigned int i=0 ; i < dirichlet_indices.size\(\) ; i++ \))p
+0 18(        { density_vector\( dirichlet_indices[i] \) = dirichlet_value_vectors[i]; })p
+0 19(        */)p
+0 21(        // #pragma omp parallel for)p
+0 22(        for\( unsigned int i=0 ; i < mesh.voxels.size\(\) ;i++ \))p
+0 23(        {)p
+0 24(                /*)p
+0 25(                if\( mesh.voxels[i].is_Dirichlet == true \))p
+0 26(                { density_vector\(i\) = dirichlet_value_vectors[i]; })p
+0 27(                */)p
+0 28(                if\( mesh.voxels[i].is_Dirichlet == true \))p
+0 29(                {)p
+0 30(                        for\( unsigned int j=0; j < dirichlet_value_vectors[i].si)p
+0 31(ze\(\); j++ \))p
+0 32(                        {)p
+0 33(                                // if\( dirichlet_activation_vector[j] == true \))p
+0 34(                                if\( dirichlet_activation_vectors[i][j] == true \))p
+0 35(                                {)p
+0 36(                                        density_vector\(i\)[j] = dirichlet_value_v)p
+0 37(ectors[i][j];)p
+0 38(                                })p
+0 39(                        })p
+0 41(                })p
+0 42(        })p
+0 43(        return;)p
+0 44(})p
+0 46(void Microenvironment::resize_voxels\( int new_number_of_voxes \))p
+0 47({)p
+0 48(        if\( mesh.Cartesian_mesh == true \))p
+0 49(        {)p
+0 50(                std::cout << "Error: only use Microenvironment::" << __FUNCTION_)p
+0 51(_ << " as a fall-back for non-Cartesian meshes." << std::endl)p
+0 52(                                  << "\\tUse one of the Microenvironment::resize_)p
+0 53(space\(\) functions instead. Ignoring directive." << std::endl;)p
+Endpage
+%%Page 7 7
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+       7)H
+0 0(                return;)p
+0 1(        })p
+0 3(        mesh.voxels.resize\( new_number_of_voxes \);)p
+0 5(        temporary_density_vectors1.resize\( mesh.voxels.size\(\) , zero \);)p
+0 6(        temporary_density_vectors2.resize\( mesh.voxels.size\(\) , zero \);)p
+0 8(        gradient_vectors.resize\( mesh.voxels.size\(\) \);)p
+0 9(        for\( unsigned int k=0 ; k < mesh.voxels.size\(\) ; k++ \))p
+0 10(        {)p
+0 11(                gradient_vectors[k].resize\( number_of_densities\(\) \);)p
+0 12(                for\( unsigned int i=0 ; i < number_of_densities\(\) ; i++ \))p
+0 13(                {)p
+0 14(                        \(gradient_vectors[k]\)[i].resize\( 3, 0.0 \);)p
+0 15(                })p
+0 16(        })p
+0 17(        gradient_vector_computed.resize\( mesh.voxels.size\(\) , false \);)p
+0 19(        dirichlet_value_vectors.assign\( mesh.voxels.size\(\), one \);)p
+0 21(        dirichlet_activation_vectors.assign\( mesh.voxels.size\(\) , dirichlet_acti)p
+0 22(vation_vector \);)p
+0 24(        return;)p
+0 25(})p
+0 28(void Microenvironment::resize_space\( int x_nodes, int y_nodes, int z_nodes \))p
+0 29({)p
+0 30(        mesh.resize\( x_nodes, y_nodes , z_nodes \);)p
+0 32(        temporary_density_vectors1.assign\( mesh.voxels.size\(\) , zero \);)p
+0 33(        temporary_density_vectors2.assign\( mesh.voxels.size\(\) , zero \);)p
+0 35(        gradient_vectors.resize\( mesh.voxels.size\(\) \);)p
+0 36(        for\( unsigned int k=0 ; k < mesh.voxels.size\(\) ; k++ \))p
+0 37(        {)p
+0 38(                gradient_vectors[k].resize\( number_of_densities\(\) \);)p
+0 39(                for\( unsigned int i=0 ; i < number_of_densities\(\) ; i++ \))p
+0 40(                {)p
+0 41(                        \(gradient_vectors[k]\)[i].resize\( 3, 0.0 \);)p
+0 42(                })p
+0 43(        })p
+0 44(        gradient_vector_computed.resize\( mesh.voxels.size\(\) , false \);)p
+0 46(        dirichlet_value_vectors.assign\( mesh.voxels.size\(\), one \);)p
+0 48(        dirichlet_activation_vectors.assign\( mesh.voxels.size\(\) , dirichlet_acti)p
+0 49(vation_vector \);)p
+0 51(        return;)p
+0 52(})p
+Endpage
+%%Page 8 8
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+       8)H
+0 0(void Microenvironment::resize_space\( double x_start, double x_end, double y_star)p
+0 1(t, double y_end, double z_start, double z_end , int x_nodes, int y_nodes, int z_)p
+0 2(nodes \))p
+0 3({)p
+0 4(        mesh.resize\( x_start, x_end, y_start, y_end, z_start, z_end, x_nodes, y_)p
+0 5(nodes , z_nodes  \);)p
+0 7(        temporary_density_vectors1.assign\( mesh.voxels.size\(\) , zero \);)p
+0 8(        temporary_density_vectors2.assign\( mesh.voxels.size\(\) , zero \);)p
+0 10(        gradient_vectors.resize\( mesh.voxels.size\(\) \);)p
+0 11(        for\( unsigned int k=0 ; k < mesh.voxels.size\(\) ; k++ \))p
+0 12(        {)p
+0 13(                gradient_vectors[k].resize\( number_of_densities\(\) \);)p
+0 14(                for\( unsigned int i=0 ; i < number_of_densities\(\) ; i++ \))p
+0 15(                {)p
+0 16(                        \(gradient_vectors[k]\)[i].resize\( 3, 0.0 \);)p
+0 17(                })p
+0 18(        })p
+0 19(        gradient_vector_computed.resize\( mesh.voxels.size\(\) , false \);)p
+0 21(        dirichlet_value_vectors.assign\( mesh.voxels.size\(\), one \);)p
+0 23(        dirichlet_activation_vectors.assign\( mesh.voxels.size\(\) , dirichlet_acti)p
+0 24(vation_vector \);)p
+0 26(        return;)p
+0 27(})p
+0 29(void Microenvironment::resize_space\( double x_start, double x_end, double y_star)p
+0 30(t, double y_end, double z_start, double z_end , double dx_new , double dy_new ,)p
+0 31(double dz_new \))p
+0 32({)p
+0 33(        mesh.resize\( x_start, x_end, y_start, y_end, z_start, z_end,  dx_new , d)p
+0 34(y_new , dz_new \);)p
+0 36(        temporary_density_vectors1.assign\( mesh.voxels.size\(\) , zero \);)p
+0 37(        temporary_density_vectors2.assign\( mesh.voxels.size\(\) , zero \);)p
+0 39(        gradient_vectors.resize\( mesh.voxels.size\(\) \);)p
+0 40(        for\( unsigned int k=0 ; k < mesh.voxels.size\(\) ; k++ \))p
+0 41(        {)p
+0 42(                gradient_vectors[k].resize\( number_of_densities\(\) \);)p
+0 43(                for\( unsigned int i=0 ; i < number_of_densities\(\) ; i++ \))p
+0 44(                {)p
+0 45(                        \(gradient_vectors[k]\)[i].resize\( 3, 0.0 \);)p
+0 46(                })p
+0 47(        })p
+0 48(        gradient_vector_computed.resize\( mesh.voxels.size\(\) , false \);)p
+0 50(        dirichlet_value_vectors.assign\( mesh.voxels.size\(\), one \);)p
+0 52(        dirichlet_activation_vectors.assign\( mesh.voxels.size\(\) , dirichlet_acti)p
+0 53(vation_vector \);)p
+Endpage
+%%Page 9 9
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+       9)H
+0 1(        return;)p
+0 2(})p
+0 4(void Microenvironment::resize_space_uniform\( double x_start, double x_end, doubl)p
+0 5(e y_start, double y_end, double z_start, double z_end , double dx_new \))p
+0 6({)p
+0 7( return resize_space\( x_start, x_end, y_start, y_end, z_start, z_end , dx_new ,)p
+0 8(dx_new, dx_new \);)p
+0 9(})p
+0 11(void Microenvironment::resize_densities\( int new_size \))p
+0 12({)p
+0 13(        zero.assign\( new_size, 0.0 \);)p
+0 14(        one.assign\( new_size , 1.0 \);)p
+0 16(        temporary_density_vectors1.assign\( mesh.voxels.size\(\) , zero \);)p
+0 17(        temporary_density_vectors2.assign\( mesh.voxels.size\(\) , zero \);)p
+0 19(        for\( unsigned int k=0 ; k < mesh.voxels.size\(\) ; k++ \))p
+0 20(        {)p
+0 21(                gradient_vectors[k].resize\( number_of_densities\(\) \);)p
+0 22(                for\( unsigned int i=0 ; i < number_of_densities\(\) ; i++ \))p
+0 23(                {)p
+0 24(                        \(gradient_vectors[k]\)[i].resize\( 3, 0.0 \);)p
+0 25(                })p
+0 26(        })p
+0 27(        gradient_vector_computed.resize\( mesh.voxels.size\(\) , false \);)p
+0 29(        diffusion_coefficients.assign\( new_size , 0.0 \);)p
+0 30(        decay_rates.assign\( new_size , 0.0 \);)p
+0 32(        density_names.assign\( new_size, "unnamed" \);)p
+0 33(        density_units.assign\( new_size , "none" \);)p
+0 35(        one_half = one;)p
+0 36(        one_half *= 0.5;)p
+0 38(        one_third = one;)p
+0 39(        one_third /= 3.0;)p
+0 41(        dirichlet_value_vectors.assign\( mesh.voxels.size\(\), one \);)p
+0 42(        dirichlet_activation_vector.assign\( new_size, true \);)p
+0 44(        dirichlet_activation_vectors.assign\( mesh.voxels.size\(\), dirichlet_activ)p
+0 45(ation_vector \);)p
+0 47(        default_microenvironment_options.Dirichlet_condition_vector.assign\( new_)p
+0 48(size , 1.0 \);)p
+0 49(        default_microenvironment_options.Dirichlet_activation_vector.assign\( new)p
+0 50(_size, true \);)p
+0 52(        default_microenvironment_options.initial_condition_vector.assign\( new_si)p
+0 53(ze , 1.0 \);)p
+Endpage
+%%Page 10 10
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      10)H
+0 1(        default_microenvironment_options.Dirichlet_all.assign\( new_size , true \))p
+0 2(;)p
+0 3(//      default_microenvironment_options.Dirichlet_interior.assign\( new_size, tr)p
+0 4(ue \);)p
+0 5(        default_microenvironment_options.Dirichlet_xmin.assign\( new_size , false)p
+0 6( \);)p
+0 7(        default_microenvironment_options.Dirichlet_xmax.assign\( new_size , false)p
+0 8( \);)p
+0 9(        default_microenvironment_options.Dirichlet_ymin.assign\( new_size , false)p
+0 10( \);)p
+0 11(        default_microenvironment_options.Dirichlet_ymax.assign\( new_size , false)p
+0 12( \);)p
+0 13(        default_microenvironment_options.Dirichlet_zmin.assign\( new_size , false)p
+0 14( \);)p
+0 15(        default_microenvironment_options.Dirichlet_zmax.assign\( new_size , false)p
+0 16( \);)p
+0 18(        default_microenvironment_options.Dirichlet_xmin_values.assign\( new_size)p
+0 19(, 1.0 \);)p
+0 20(        default_microenvironment_options.Dirichlet_xmax_values.assign\( new_size)p
+0 21(, 1.0 \);)p
+0 22(        default_microenvironment_options.Dirichlet_ymin_values.assign\( new_size)p
+0 23(, 1.0 \);)p
+0 24(        default_microenvironment_options.Dirichlet_ymax_values.assign\( new_size)p
+0 25(, 1.0 \);)p
+0 26(        default_microenvironment_options.Dirichlet_zmin_values.assign\( new_size)p
+0 27(, 1.0 \);)p
+0 28(        default_microenvironment_options.Dirichlet_zmax_values.assign\( new_size)p
+0 29(, 1.0 \);)p
+0 31(        return;)p
+0 32(})p
+0 34(void Microenvironment::add_density\( void \))p
+0 35({)p
+0 36(        // fix in PhysiCell preview November 2017)p
+0 37(        // default_microenvironment_options.use_oxygen_as_first_field = false;)p
+0 39(        // update 1, 0)p
+0 40(        zero.push_back\( 0.0 \);)p
+0 41(        one.push_back\( 1.0 \);)p
+0 43(        // update units)p
+0 44(        density_names.push_back\( "unnamed" \);)p
+0 45(        density_units.push_back\( "none" \);)p
+0 47(        // update coefficients)p
+0 48(        diffusion_coefficients.push_back\( 0.0 \);)p
+0 49(        decay_rates.push_back\( 0.0 \);)p
+0 51(        // update sources and such)p
+0 52(        for\( unsigned int i=0; i < temporary_density_vectors1.size\(\) ; i++ \))p
+0 53(        {)p
+Endpage
+%%Page 11 11
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      11)H
+0 0(                temporary_density_vectors1[i].push_back\( 0.0 \);)p
+0 1(                temporary_density_vectors2[i].push_back\( 0.0 \);)p
+0 2(        })p
+0 4(        // resize the gradient data structures)p
+0 5(        for\( unsigned int k=0 ; k < mesh.voxels.size\(\) ; k++ \))p
+0 6(        {)p
+0 7(                gradient_vectors[k].resize\( number_of_densities\(\) \);)p
+0 8(                for\( unsigned int i=0 ; i < number_of_densities\(\) ; i++ \))p
+0 9(                {)p
+0 10(                        \(gradient_vectors[k]\)[i].resize\( 3, 0.0 \);)p
+0 11(                })p
+0 12(        })p
+0 14(        gradient_vector_computed.resize\( mesh.voxels.size\(\) , false \);)p
+0 16(        one_half = one;)p
+0 17(        one_half *= 0.5;)p
+0 19(        one_third = one;)p
+0 20(        one_third /= 3.0;)p
+0 22(        dirichlet_value_vectors.assign\( mesh.voxels.size\(\), one \);)p
+0 23(        dirichlet_activation_vector.push_back\( true \);)p
+0 24(        dirichlet_activation_vectors.assign\( mesh.voxels.size\(\), dirichlet_activ)p
+0 25(ation_vector \);)p
+0 27(        // Fixes in PhysiCell preview November 2017)p
+0 28(        default_microenvironment_options.Dirichlet_condition_vector.push_back\( 1)p
+0 29(.0 \); //  = one;)p
+0 30(        default_microenvironment_options.Dirichlet_activation_vector.push_back\()p
+0 31(true \); // assign\( number_of_densities\(\), true \);)p
+0 33(        default_microenvironment_options.initial_condition_vector.push_back\( 1.0)p
+0 34( \);)p
+0 36(        default_microenvironment_options.Dirichlet_all.push_back\( true \);)p
+0 37(//      default_microenvironment_options.Dirichlet_interior.push_back\( true \);)p
+0 38(        default_microenvironment_options.Dirichlet_xmin.push_back\( false \);)p
+0 39(        default_microenvironment_options.Dirichlet_xmax.push_back\( false \);)p
+0 40(        default_microenvironment_options.Dirichlet_ymin.push_back\( false \);)p
+0 41(        default_microenvironment_options.Dirichlet_ymax.push_back\( false \);)p
+0 42(        default_microenvironment_options.Dirichlet_zmin.push_back\( false \);)p
+0 43(        default_microenvironment_options.Dirichlet_zmax.push_back\( false \);)p
+0 45(        default_microenvironment_options.Dirichlet_xmin_values.push_back\( 1.0 \);)p
+0 46(        default_microenvironment_options.Dirichlet_xmax_values.push_back\( 1.0 \);)p
+0 47(        default_microenvironment_options.Dirichlet_ymin_values.push_back\( 1.0 \);)p
+0 48(        default_microenvironment_options.Dirichlet_ymax_values.push_back\( 1.0 \);)p
+0 49(        default_microenvironment_options.Dirichlet_zmin_values.push_back\( 1.0 \);)p
+0 50(        default_microenvironment_options.Dirichlet_zmax_values.push_back\( 1.0 \);)p
+0 52(        return;)p
+0 53(})p
+Endpage
+%%Page 12 12
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      12)H
+0 1(void Microenvironment::add_density\( std::string name , std::string units \))p
+0 2({)p
+0 3(        // fix in PhysiCell preview November 2017)p
+0 4(        // default_microenvironment_options.use_oxygen_as_first_field = false;)p
+0 6(        // update 1, 0)p
+0 7(        zero.push_back\( 0.0 \);)p
+0 8(        one.push_back\( 1.0 \);)p
+0 10(        // update units)p
+0 11(        density_names.push_back\( name \);)p
+0 12(        density_units.push_back\( units \);)p
+0 14(        // update coefficients)p
+0 15(        diffusion_coefficients.push_back\( 0.0 \);)p
+0 16(        decay_rates.push_back\( 0.0 \);)p
+0 18(        // update sources and such)p
+0 19(        for\( unsigned int i=0; i < temporary_density_vectors1.size\(\) ; i++ \))p
+0 20(        {)p
+0 21(                temporary_density_vectors1[i].push_back\( 0.0 \);)p
+0 22(                temporary_density_vectors2[i].push_back\( 0.0 \);)p
+0 23(        })p
+0 25(        // resize the gradient data structures,)p
+0 26(        for\( unsigned int k=0 ; k < mesh.voxels.size\(\) ; k++ \))p
+0 27(        {)p
+0 28(                gradient_vectors[k].resize\( number_of_densities\(\) \);)p
+0 29(                for\( unsigned int i=0 ; i < number_of_densities\(\) ; i++ \))p
+0 30(                {)p
+0 31(                        \(gradient_vectors[k]\)[i].resize\( 3, 0.0 \);)p
+0 32(                })p
+0 33(        })p
+0 34(        gradient_vector_computed.resize\( mesh.voxels.size\(\) , false \);)p
+0 36(        one_half = one;)p
+0 37(        one_half *= 0.5;)p
+0 39(        one_third = one;)p
+0 40(        one_third /= 3.0;)p
+0 42(        dirichlet_value_vectors.assign\( mesh.voxels.size\(\), one \);)p
+0 43(        dirichlet_activation_vector.push_back\( true \);)p
+0 44(        dirichlet_activation_vectors.assign\( mesh.voxels.size\(\), dirichlet_activ)p
+0 45(ation_vector \);)p
+0 47(        // fix in PhysiCell preview November 2017)p
+0 48(        default_microenvironment_options.Dirichlet_condition_vector.push_back\( 1)p
+0 49(.0 \); //  = one;)p
+0 50(        default_microenvironment_options.Dirichlet_activation_vector.push_back\()p
+0 51(true \); // assign\( number_of_densities\(\), true \);)p
+0 53(        default_microenvironment_options.Dirichlet_all.push_back\( true \);)p
+Endpage
+%%Page 13 13
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      13)H
+0 0(//      default_microenvironment_options.Dirichlet_interior.push_back\( true \);)p
+0 1(        default_microenvironment_options.Dirichlet_xmin.push_back\( false \);)p
+0 2(        default_microenvironment_options.Dirichlet_xmax.push_back\( false \);)p
+0 3(        default_microenvironment_options.Dirichlet_ymin.push_back\( false \);)p
+0 4(        default_microenvironment_options.Dirichlet_ymax.push_back\( false \);)p
+0 5(        default_microenvironment_options.Dirichlet_zmin.push_back\( false \);)p
+0 6(        default_microenvironment_options.Dirichlet_zmax.push_back\( false \);)p
+0 8(        default_microenvironment_options.Dirichlet_xmin_values.push_back\( 1.0 \);)p
+0 9(        default_microenvironment_options.Dirichlet_xmax_values.push_back\( 1.0 \);)p
+0 10(        default_microenvironment_options.Dirichlet_ymin_values.push_back\( 1.0 \);)p
+0 11(        default_microenvironment_options.Dirichlet_ymax_values.push_back\( 1.0 \);)p
+0 12(        default_microenvironment_options.Dirichlet_zmin_values.push_back\( 1.0 \);)p
+0 13(        default_microenvironment_options.Dirichlet_zmax_values.push_back\( 1.0 \);)p
+0 15(        default_microenvironment_options.initial_condition_vector.push_back\( 1.0)p
+0 16( \);)p
+0 18(        return;)p
+0 19(})p
+0 21(void Microenvironment::add_density\( std::string name , std::string units, double)p
+0 22( diffusion_constant, double decay_rate \))p
+0 23({)p
+0 24(        // fix in PhysiCell preview November 2017)p
+0 25(        // default_microenvironment_options.use_oxygen_as_first_field = false;)p
+0 27(        // update 1, 0)p
+0 28(        zero.push_back\( 0.0 \);)p
+0 29(        one.push_back\( 1.0 \);)p
+0 31(        // update units)p
+0 32(        density_names.push_back\( name \);)p
+0 33(        density_units.push_back\( units \);)p
+0 35(        // update coefficients)p
+0 36(        diffusion_coefficients.push_back\( diffusion_constant \);)p
+0 37(        decay_rates.push_back\( decay_rate \);)p
+0 39(        // update sources and such)p
+0 40(        for\( unsigned int i=0; i < temporary_density_vectors1.size\(\) ; i++ \))p
+0 41(        {)p
+0 42(                temporary_density_vectors1[i].push_back\( 0.0 \);)p
+0 43(                temporary_density_vectors2[i].push_back\( 0.0 \);)p
+0 44(        })p
+0 46(        // resize the gradient data structures)p
+0 47(        for\( unsigned int k=0 ; k < mesh.voxels.size\(\) ; k++ \))p
+0 48(        {)p
+0 49(                gradient_vectors[k].resize\( number_of_densities\(\) \);)p
+0 50(                for\( unsigned int i=0 ; i < number_of_densities\(\) ; i++ \))p
+0 51(                {)p
+0 52(                        \(gradient_vectors[k]\)[i].resize\( 3, 0.0 \);)p
+0 53(                })p
+Endpage
+%%Page 14 14
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      14)H
+0 0(        })p
+0 1(        gradient_vector_computed.resize\( mesh.voxels.size\(\) , false \);)p
+0 3(        one_half = one;)p
+0 4(        one_half *= 0.5;)p
+0 6(        one_third = one;)p
+0 7(        one_third /= 3.0;)p
+0 9(        dirichlet_value_vectors.assign\( mesh.voxels.size\(\), one \);)p
+0 10(        dirichlet_activation_vector.push_back\( true \);)p
+0 11(        dirichlet_activation_vectors.assign\( mesh.voxels.size\(\), dirichlet_activ)p
+0 12(ation_vector \);)p
+0 14(        // fix in PhysiCell preview November 2017)p
+0 15(        default_microenvironment_options.Dirichlet_condition_vector.push_back\( 1)p
+0 16(.0 \); // = one;)p
+0 17(        default_microenvironment_options.Dirichlet_activation_vector.push_back\()p
+0 18(true \); // assign\( number_of_densities\(\), true \);)p
+0 20(        default_microenvironment_options.initial_condition_vector.push_back\( 1.0)p
+0 21( \);)p
+0 23(        default_microenvironment_options.Dirichlet_all.push_back\( true \);)p
+0 24(//      default_microenvironment_options.Dirichlet_interior.push_back\( true \);)p
+0 25(        default_microenvironment_options.Dirichlet_xmin.push_back\( false \);)p
+0 26(        default_microenvironment_options.Dirichlet_xmax.push_back\( false \);)p
+0 27(        default_microenvironment_options.Dirichlet_ymin.push_back\( false \);)p
+0 28(        default_microenvironment_options.Dirichlet_ymax.push_back\( false \);)p
+0 29(        default_microenvironment_options.Dirichlet_zmin.push_back\( false \);)p
+0 30(        default_microenvironment_options.Dirichlet_zmax.push_back\( false \);)p
+0 32(        default_microenvironment_options.Dirichlet_xmin_values.push_back\( 1.0 \);)p
+0 33(        default_microenvironment_options.Dirichlet_xmax_values.push_back\( 1.0 \);)p
+0 34(        default_microenvironment_options.Dirichlet_ymin_values.push_back\( 1.0 \);)p
+0 35(        default_microenvironment_options.Dirichlet_ymax_values.push_back\( 1.0 \);)p
+0 36(        default_microenvironment_options.Dirichlet_zmin_values.push_back\( 1.0 \);)p
+0 37(        default_microenvironment_options.Dirichlet_zmax_values.push_back\( 1.0 \);)p
+0 39(        return;)p
+0 40(})p
+0 42(int Microenvironment::find_density_index\( std::string name \))p
+0 43({)p
+0 44(        for\( unsigned int i=0; i < density_names.size\(\) ; i++ \))p
+0 45(        {)p
+0 46(                if\( density_names[i] == name \))p
+0 47(                { return i; })p
+0 48(        })p
+0 49(        return -1;)p
+0 50(})p
+0 52(void Microenvironment::set_density\( int index , std::string name , std::string u)p
+0 53(nits \))p
+Endpage
+%%Page 15 15
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      15)H
+0 0({)p
+0 1(        // fix in PhysiCell preview November 2017)p
+0 2(        if\( index == 0 \))p
+0 3(        { default_microenvironment_options.use_oxygen_as_first_field = false; })p
+0 5(        density_names[index] = name;)p
+0 6(        density_units[index] = units;)p
+0 7(        return;)p
+0 8(})p
+0 10(void Microenvironment::set_density\( int index , std::string name , std::string u)p
+0 11(nits , double diffusion_constant , double decay_rate \))p
+0 12({)p
+0 13(        // fix in PhysiCell preview November 2017)p
+0 14(        if\( index == 0 \))p
+0 15(        { default_microenvironment_options.use_oxygen_as_first_field = false; })p
+0 17(        density_names[index] = name;)p
+0 18(        density_units[index] = units;)p
+0 20(        diffusion_coefficients[index] = diffusion_constant;)p
+0 21(        decay_rates[index] = decay_rate;)p
+0 22(        return;)p
+0 23(})p
+0 25(int Microenvironment::voxel_index\( int i, int j, int k \))p
+0 26({ return mesh.voxel_index\(i,j,k\) ; })p
+0 28(std::vector<unsigned int> Microenvironment::cartesian_indices\( int n \))p
+0 29({ return mesh.cartesian_indices\( n \); })p
+0 31(int Microenvironment::nearest_voxel_index\( std::vector<double>& position \))p
+0 32({ return mesh.nearest_voxel_index\( position \); })p
+0 34(Voxel& Microenvironment::voxels\( int voxel_index \))p
+0 35({ return mesh.voxels[voxel_index]; })p
+0 37(std::vector<unsigned int> Microenvironment::nearest_cartesian_indices\( std::vect)p
+0 38(or<double>& position \))p
+0 39({ return mesh.nearest_cartesian_indices\( position \); })p
+0 41(Voxel& Microenvironment::nearest_voxel\( std::vector<double>& position \))p
+0 42({ return mesh.nearest_voxel\( position \); })p
+0 44(std::vector<double>& Microenvironment::nearest_density_vector\( std::vector<doubl)p
+0 45(e>& position \))p
+0 46({ return \(*p_density_vectors\)[ mesh.nearest_voxel_index\( position \) ]; })p
+0 48(std::vector<double>& Microenvironment::nearest_density_vector\( int voxel_index \))p
+0 49({ return \(*p_density_vectors\)[ voxel_index ]; })p
+0 51(std::vector<double>& Microenvironment::operator\(\)\( int i, int j, int k \))p
+0 52({ return \(*p_density_vectors\)[ voxel_index\(i,j,k\) ]; })p
+Endpage
+%%Page 16 16
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      16)H
+0 0(std::vector<double>& Microenvironment::operator\(\)\( int i, int j \))p
+0 1({ return \(*p_density_vectors\)[ voxel_index\(i,j,0\) ]; })p
+0 3(std::vector<double>& Microenvironment::operator\(\)\( int n \))p
+0 4({ return \(*p_density_vectors\)[ n ]; })p
+0 6(std::vector<double>& Microenvironment::density_vector\( int i, int j, int k \))p
+0 7({ return \(*p_density_vectors\)[ voxel_index\(i,j,k\) ]; })p
+0 9(std::vector<double>& Microenvironment::density_vector\( int i, int j \))p
+0 10({ return \(*p_density_vectors\)[ voxel_index\(i,j,0\) ]; })p
+0 12(std::vector<double>& Microenvironment::density_vector\( int n \))p
+0 13({ return \(*p_density_vectors\)[ n ]; })p
+0 15(void Microenvironment::simulate_diffusion_decay\( double dt \))p
+0 16({)p
+0 17(        if\( diffusion_decay_solver \))p
+0 18(        { diffusion_decay_solver\( *this, dt \); })p
+0 19(        else)p
+0 20(        {)p
+0 21(                std::cout << "Warning: diffusion-reaction-source/sink solver not)p
+0 22( set for Microenvironment object at " << this << ". Nothing happened!" << std::e)p
+0 23(ndl;)p
+0 24(                std::cout << "   Consider using Microenvironment::auto_choose_di)p
+0 25(ffusion_decay_solver\(void\) ... " << std::endl)p
+0 26(                << std::endl;)p
+0 27(        })p
+0 28(        return;)p
+0 29(})p
+0 31(void Microenvironment::auto_choose_diffusion_decay_solver\( void \))p
+0 32({)p
+0 33(        // set the safest choice)p
+0 34(        diffusion_decay_solver = diffusion_decay_solver__constant_coefficients_e)p
+0 35(xplicit;)p
+0 37(        std::cout << "Warning: auto-selection of diffusion-decay-source/sink sol)p
+0 38(ver not fully implemented!" << std::endl;)p
+0 40( // eventual logic: if non-Cartesian, use explicit)p
+0 41( // if Cartesian, if non-variable, use the constant coefficient super-fast code)p
+0 42( // otherwise, use the variable coefficient code)p
+0 44(})p
+0 46(void Microenvironment::display_information\( std::ostream& os \))p
+0 47({)p
+0 48(        os << std::endl << "Microenvironment summary: " << name << ": " << std::)p
+0 49(endl;)p
+0 50(        mesh.display_information\( os \);)p
+0 51(        os << "Densities: \(" << number_of_densities\(\) << " total\)" << std::endl;)p
+0 52(        for\( unsigned int i = 0 ; i < density_names.size\(\) ; i++ \))p
+0 53(        {)p
+Endpage
+%%Page 17 17
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      17)H
+0 0(                os << "   " << density_names[i] << ":" << std::endl)p
+0 1(                << "     units: " << density_units[i] << std::endl)p
+0 2(                << "     diffusion coefficient: " << diffusion_coefficients[i])p
+0 3(                        << " " << spatial_units << "^2 / " << time_units << std:)p
+0 4(:endl)p
+0 5(                << "     decay rate: " << decay_rates[i])p
+0 6(                        << " " << time_units << "^-1" << std::endl)p
+0 7(                << "     diffusion length scale: " << sqrt\( diffusion_coefficien)p
+0 8(ts[i] / \( 1e-12 + decay_rates[i] \) \))p
+0 9(                        << " " << spatial_units << std::endl)p
+0 10(                << "     initial condition: " << default_microenvironment_option)p
+0 11(s.initial_condition_vector[i])p
+0 12(                        << " " << density_units[i] << std::endl)p
+0 13(                << "     boundary condition: " << default_microenvironment_optio)p
+0 14(ns.Dirichlet_condition_vector[i])p
+0 15(                        << " " << density_units[i] << " \(enabled: ";)p
+0 16(                if\( dirichlet_activation_vector[i] == true \))p
+0 17(                { os << "true"; })p
+0 18(                else)p
+0 19(                { os << "false"; })p
+0 20(                os << "\)" << std::endl;)p
+0 21(        })p
+0 22(        os << std::endl;)p
+0 24(        return;)p
+0 25(})p
+0 27(unsigned int Microenvironment::number_of_densities\( void \))p
+0 28({ return \(*p_density_vectors\)[0].size\(\); })p
+0 30(unsigned int Microenvironment::number_of_voxels\( void \))p
+0 31({ return mesh.voxels.size\(\); })p
+0 33(unsigned int Microenvironment::number_of_voxel_faces\( void \))p
+0 34({ return mesh.voxel_faces.size\(\); })p
+0 36(void Microenvironment::write_to_matlab\( std::string filename \))p
+0 37({)p
+0 38(        int number_of_data_entries = mesh.voxels.size\(\);)p
+0 39(        int size_of_each_datum = 3 + 1 + \(*p_density_vectors\)[0].size\(\);)p
+0 41(        FILE* fp = write_matlab_header\( size_of_each_datum, number_of_data_entri)p
+0 42(es,  filename, "multiscale_microenvironment" \);)p
+0 44(        // storing data as cols)p
+0 45(        for\( int i=0; i < number_of_data_entries ; i++ \))p
+0 46(        {)p
+0 47(                fwrite\( \(char*\) &\( mesh.voxels[i].center[0] \) , sizeof\(double\) ,)p
+0 48( 1 , fp \);)p
+0 49(                fwrite\( \(char*\) &\( mesh.voxels[i].center[1] \) , sizeof\(double\) ,)p
+0 50( 1 , fp \);)p
+0 51(                fwrite\( \(char*\) &\( mesh.voxels[i].center[2] \) , sizeof\(double\) ,)p
+0 52( 1 , fp \);)p
+0 53(                fwrite\( \(char*\) &\( mesh.voxels[i].volume \) , sizeof\(double\) , 1)p
+Endpage
+%%Page 18 18
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      18)H
+0 0(, fp \);)p
+0 2(                // densities)p
+0 4(                for\( unsigned int j=0 ; j < \(*p_density_vectors\)[i].size\(\) ; j++)p
+0 5(\))p
+0 6(                { fwrite\( \(char*\) &\( \(\(*p_density_vectors\)[i]\)[j] \) , sizeof\(dou)p
+0 7(ble\) , 1 , fp \); })p
+0 8(        })p
+0 10(        fclose\( fp \);)p
+0 11(        return;)p
+0 12(})p
+0 16(void Microenvironment::simulate_bulk_sources_and_sinks\( double dt \))p
+0 17({)p
+0 18(        if\( !bulk_source_sink_solver_setup_done \))p
+0 19(        {)p
+0 20(                bulk_source_sink_solver_temp1.resize\( mesh.voxels.size\(\) , zero)p
+0 21(\);)p
+0 22(                bulk_source_sink_solver_temp2.resize\( mesh.voxels.size\(\) , zero)p
+0 23(\);)p
+0 24(                bulk_source_sink_solver_temp3.resize\( mesh.voxels.size\(\) , zero)p
+0 25(\);)p
+0 27(                bulk_source_sink_solver_setup_done = true;)p
+0 28(        })p
+0 30(        #pragma omp parallel for)p
+0 31(        for\( unsigned int i=0; i < mesh.voxels.size\(\) ; i++ \))p
+0 32(        {)p
+0 33(                bulk_supply_rate_function\( this,i, &bulk_source_sink_solver_temp)p
+0 34(1[i] \); // temp1 = S)p
+0 35(                bulk_supply_target_densities_function\( this,i, &bulk_source_sink)p
+0 36(_solver_temp2[i]\); // temp2 = T)p
+0 37(                bulk_uptake_rate_function\( this,i, &bulk_source_sink_solver_temp)p
+0 38(3[i] \); // temp3 = U)p
+0 41(                bulk_source_sink_solver_temp2[i] *= bulk_source_sink_solver_temp)p
+0 42(1[i]; // temp2 = S*T)p
+0 43(                axpy\( &\(*p_density_vectors\)[i] , dt , bulk_source_sink_solver_te)p
+0 44(mp2[i] \); // out = out + dt*temp2 = out + dt*S*T)p
+0 45(                bulk_source_sink_solver_temp3[i] += bulk_source_sink_solver_temp)p
+0 46(1[i]; // temp3 = U+S)p
+0 47(                bulk_source_sink_solver_temp3[i] *= dt; // temp3 = dt*\(U+S\))p
+0 48(                bulk_source_sink_solver_temp3[i] += one; // temp3 = 1 + dt*\(U+S\))p
+0 50(                \(*p_density_vectors\)[i] /= bulk_source_sink_solver_temp3[i];)p
+0 51(        })p
+0 53(        return;)p
+Endpage
+%%Page 19 19
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      19)H
+0 0(})p
+0 2(void Microenvironment::simulate_cell_sources_and_sinks\( std::vector<Basic_Agent*)p
+0 3(>& basic_agent_list , double dt \))p
+0 4({)p
+0 5(        #pragma omp parallel for)p
+0 6(        for\( unsigned int i=0 ; i < basic_agent_list.size\(\) ; i++ \))p
+0 7(        {)p
+0 8(                basic_agent_list[i]->simulate_secretion_and_uptake\( this , dt \);)p
+0 9(        })p
+0 11(        return;)p
+0 12(})p
+0 14(void Microenvironment::simulate_cell_sources_and_sinks\( double dt \))p
+0 15({)p
+0 16(        simulate_cell_sources_and_sinks\(all_basic_agents, dt\);)p
+0 17(})p
+0 19(void Microenvironment::update_rates\( void \))p
+0 20({)p
+0 21(        if\( supply_target_densities_times_supply_rates.size\(\) != number_of_voxel)p
+0 22(s\(\) \))p
+0 23(        { supply_target_densities_times_supply_rates.assign\( number_of_voxels\(\))p
+0 24(, zero \); })p
+0 26(        if\( supply_rates.size\(\) != number_of_voxels\(\) \))p
+0 27(        { supply_rates.assign\( number_of_voxels\(\) , zero \); })p
+0 29(        if\( uptake_rates.size\(\) != number_of_voxels\(\) \))p
+0 30(        { uptake_rates.assign\( number_of_voxels\(\) , zero \); })p
+0 32(        #pragma omp parallel for)p
+0 33(        for\( unsigned int i=0 ; i < number_of_voxels\(\) ; i++ \))p
+0 34(        {)p
+0 35(                bulk_uptake_rate_function\( this,i, &\(uptake_rates[i]\) \);)p
+0 36(                bulk_supply_rate_function\( this,i, &\(supply_rates[i]\) \);)p
+0 37(                bulk_supply_target_densities_function\( this,i, &\(supply_target_d)p
+0 38(ensities_times_supply_rates[i]\) \);)p
+0 40(                supply_target_densities_times_supply_rates[i] *= supply_rates[i])p
+0 41(;)p
+0 42(        })p
+0 43(        return;)p
+0 44(})p
+0 46(std::vector<gradient>& Microenvironment::gradient_vector\(int i, int j, int k\))p
+0 47({)p
+0 48(        int n = voxel_index\(i,j,k\);)p
+0 49(        if\( gradient_vector_computed[n] == false \))p
+0 50(        {)p
+0 51(                compute_gradient_vector\( n \);)p
+0 52(        })p
+Endpage
+%%Page 20 20
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      20)H
+0 0(        return gradient_vectors[n];)p
+0 1(})p
+0 3(std::vector<gradient>& Microenvironment::gradient_vector\(int i, int j \))p
+0 4({)p
+0 5(        int n = voxel_index\(i,j,0\);)p
+0 6(        if\( gradient_vector_computed[n] == false \))p
+0 7(        {)p
+0 8(                compute_gradient_vector\( n \);)p
+0 9(        })p
+0 11(        return gradient_vectors[n];)p
+0 12(})p
+0 14(std::vector<gradient>& Microenvironment::gradient_vector\(int n \))p
+0 15({)p
+0 16(        // if the gradient has not yet been computed, then do it!)p
+0 17(        if\( gradient_vector_computed[n] == false \))p
+0 18(        {)p
+0 19(                compute_gradient_vector\( n \);)p
+0 20(        })p
+0 23(        return gradient_vectors[n];)p
+0 24(})p
+0 26(std::vector<gradient>& Microenvironment::nearest_gradient_vector\( std::vector<do)p
+0 27(uble>& position \))p
+0 28({)p
+0 29(        int n = nearest_voxel_index\( position \);)p
+0 30(        if\( gradient_vector_computed[n] == false \))p
+0 31(        {)p
+0 32(                compute_gradient_vector\( n \);)p
+0 33(        })p
+0 35(        return gradient_vectors[n];)p
+0 36(})p
+0 38(void Microenvironment::compute_all_gradient_vectors\( void \))p
+0 39({)p
+0 40(        static double two_dx = mesh.dx;)p
+0 41(        static double two_dy = mesh.dy;)p
+0 42(        static double two_dz = mesh.dz;)p
+0 43(        static bool gradient_constants_defined = false;)p
+0 44(        if\( gradient_constants_defined == false \))p
+0 45(        {)p
+0 46(                two_dx *= 2.0;)p
+0 47(                two_dy *= 2.0;)p
+0 48(                two_dz *= 2.0;)p
+0 49(                gradient_constants_defined = true;)p
+0 50(        })p
+0 52(        #pragma omp parallel for)p
+0 53(        for\( unsigned int k=0; k < mesh.z_coordinates.size\(\) ; k++ \))p
+Endpage
+%%Page 21 21
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      21)H
+0 0(        {)p
+0 1(                for\( unsigned int j=0; j < mesh.y_coordinates.size\(\) ; j++ \))p
+0 2(                {)p
+0 3(                        // endcaps)p
+0 4(                        for\( unsigned int q=0; q < number_of_densities\(\) ; q++ \))p
+0 5(                        {)p
+0 6(                                int i = 0;)p
+0 7(                                int n = voxel_index\(i,j,k\);)p
+0 8(                                // x-derivative of qth substrate at voxel n)p
+0 9(                                gradient_vectors[n][q][0] = \(*p_density_vectors\))p
+0 10([n+thomas_i_jump][q];)p
+0 11(                                gradient_vectors[n][q][0] -= \(*p_density_vectors)p
+0 12(\)[n][q];)p
+0 13(                                gradient_vectors[n][q][0] /= mesh.dx;)p
+0 15(                                gradient_vector_computed[n] = true;)p
+0 16(                        })p
+0 17(                        for\( unsigned int q=0; q < number_of_densities\(\) ; q++ \))p
+0 18(                        {)p
+0 19(                                int i = mesh.x_coordinates.size\(\)-1;)p
+0 20(                                int n = voxel_index\(i,j,k\);)p
+0 21(                                // x-derivative of qth substrate at voxel n)p
+0 22(                                gradient_vectors[n][q][0] = \(*p_density_vectors\))p
+0 23([n][q];)p
+0 24(                                gradient_vectors[n][q][0] -= \(*p_density_vectors)p
+0 25(\)[n-thomas_i_jump][q];)p
+0 26(                                gradient_vectors[n][q][0] /= mesh.dx;)p
+0 28(                                gradient_vector_computed[n] = true;)p
+0 29(                        })p
+0 31(                        for\( unsigned int i=1; i < mesh.x_coordinates.size\(\)-1 ;)p
+0 32( i++ \))p
+0 33(                        {)p
+0 34(                                for\( unsigned int q=0; q < number_of_densities\(\))p
+0 35( ; q++ \))p
+0 36(                                {)p
+0 37(                                        int n = voxel_index\(i,j,k\);)p
+0 38(                                        // x-derivative of qth substrate at voxe)p
+0 39(l n)p
+0 40(                                        gradient_vectors[n][q][0] = \(*p_density_)p
+0 41(vectors\)[n+thomas_i_jump][q];)p
+0 42(                                        gradient_vectors[n][q][0] -= \(*p_density)p
+0 43(_vectors\)[n-thomas_i_jump][q];)p
+0 44(                                        gradient_vectors[n][q][0] /= two_dx;)p
+0 46(                                        gradient_vector_computed[n] = true;)p
+0 47(                                })p
+0 48(                        })p
+0 50(                })p
+0 51(        })p
+0 53(        #pragma omp parallel for)p
+Endpage
+%%Page 22 22
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      22)H
+0 0(        for\( unsigned int k=0; k < mesh.z_coordinates.size\(\) ; k++ \))p
+0 1(        {)p
+0 2(                for\( unsigned int i=0; i < mesh.x_coordinates.size\(\) ; i++ \))p
+0 3(                {)p
+0 4(                        // endcaps)p
+0 5(                        for\( unsigned int q=0; q < number_of_densities\(\) ; q++ \))p
+0 6(                        {)p
+0 7(                                int j = 0;)p
+0 8(                                int n = voxel_index\(i,j,k\);)p
+0 9(                                // x-derivative of qth substrate at voxel n)p
+0 10(                                gradient_vectors[n][q][1] = \(*p_density_vectors\))p
+0 11([n+thomas_j_jump][q];)p
+0 12(                                gradient_vectors[n][q][1] -= \(*p_density_vectors)p
+0 13(\)[n][q];)p
+0 14(                                gradient_vectors[n][q][1] /= mesh.dy;)p
+0 16(                                gradient_vector_computed[n] = true;)p
+0 17(                        })p
+0 18(                        for\( unsigned int q=0; q < number_of_densities\(\) ; q++ \))p
+0 19(                        {)p
+0 20(                                int j = mesh.y_coordinates.size\(\)-1;)p
+0 21(                                int n = voxel_index\(i,j,k\);)p
+0 22(                                // x-derivative of qth substrate at voxel n)p
+0 23(                                gradient_vectors[n][q][1] = \(*p_density_vectors\))p
+0 24([n][q];)p
+0 25(                                gradient_vectors[n][q][1] -= \(*p_density_vectors)p
+0 26(\)[n-thomas_j_jump][q];)p
+0 27(                                gradient_vectors[n][q][1] /= mesh.dy;)p
+0 29(                                gradient_vector_computed[n] = true;)p
+0 30(                        })p
+0 32(                        for\( unsigned int j=1; j < mesh.y_coordinates.size\(\)-1 ;)p
+0 33( j++ \))p
+0 34(                        {)p
+0 35(                                for\( unsigned int q=0; q < number_of_densities\(\))p
+0 36( ; q++ \))p
+0 37(                                {)p
+0 38(                                        int n = voxel_index\(i,j,k\);)p
+0 39(                                        // y-derivative of qth substrate at voxe)p
+0 40(l n)p
+0 41(                                        gradient_vectors[n][q][1] = \(*p_density_)p
+0 42(vectors\)[n+thomas_j_jump][q];)p
+0 43(                                        gradient_vectors[n][q][1] -= \(*p_density)p
+0 44(_vectors\)[n-thomas_j_jump][q];)p
+0 45(                                        gradient_vectors[n][q][1] /= two_dy;)p
+0 46(                                        gradient_vector_computed[n] = true;)p
+0 47(                                })p
+0 48(                        })p
+0 50(                })p
+0 51(        })p
+0 53(        // don't bother computing z component if there is no z-directoin)p
+Endpage
+%%Page 23 23
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      23)H
+0 0(        if\( mesh.z_coordinates.size\(\) == 1 \))p
+0 1(        { return; })p
+0 3(        #pragma omp parallel for)p
+0 4(        for\( unsigned int j=0; j < mesh.y_coordinates.size\(\) ; j++ \))p
+0 5(        {)p
+0 6(                for\( unsigned int i=0; i < mesh.x_coordinates.size\(\) ; i++ \))p
+0 7(                {)p
+0 8(                        // endcaps)p
+0 9(                        for\( unsigned int q=0; q < number_of_densities\(\) ; q++ \))p
+0 10(                        {)p
+0 11(                                int k = 0;)p
+0 12(                                int n = voxel_index\(i,j,k\);)p
+0 13(                                // x-derivative of qth substrate at voxel n)p
+0 14(                                gradient_vectors[n][q][2] = \(*p_density_vectors\))p
+0 15([n+thomas_k_jump][q];)p
+0 16(                                gradient_vectors[n][q][2] -= \(*p_density_vectors)p
+0 17(\)[n][q];)p
+0 18(                                gradient_vectors[n][q][2] /= mesh.dz;)p
+0 20(                                gradient_vector_computed[n] = true;)p
+0 21(                        })p
+0 22(                        for\( unsigned int q=0; q < number_of_densities\(\) ; q++ \))p
+0 23(                        {)p
+0 24(                                int k = mesh.z_coordinates.size\(\)-1;)p
+0 25(                                int n = voxel_index\(i,j,k\);)p
+0 26(                                // x-derivative of qth substrate at voxel n)p
+0 27(                                gradient_vectors[n][q][2] = \(*p_density_vectors\))p
+0 28([n][q];)p
+0 29(                                gradient_vectors[n][q][2] -= \(*p_density_vectors)p
+0 30(\)[n-thomas_k_jump][q];)p
+0 31(                                gradient_vectors[n][q][2] /= mesh.dz;)p
+0 33(                                gradient_vector_computed[n] = true;)p
+0 34(                        })p
+0 36(                        for\( unsigned int k=1; k < mesh.z_coordinates.size\(\)-1 ;)p
+0 37( k++ \))p
+0 38(                        {)p
+0 39(                                for\( unsigned int q=0; q < number_of_densities\(\))p
+0 40( ; q++ \))p
+0 41(                                {)p
+0 42(                                        int n = voxel_index\(i,j,k\);)p
+0 43(                                        // y-derivative of qth substrate at voxe)p
+0 44(l n)p
+0 45(                                        gradient_vectors[n][q][2] = \(*p_density_)p
+0 46(vectors\)[n+thomas_k_jump][q];)p
+0 47(                                        gradient_vectors[n][q][2] -= \(*p_density)p
+0 48(_vectors\)[n-thomas_k_jump][q];)p
+0 49(                                        gradient_vectors[n][q][2] /= two_dz;)p
+0 50(                                        gradient_vector_computed[n] = true;)p
+0 51(                                })p
+0 52(                        })p
+Endpage
+%%Page 24 24
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      24)H
+0 0(                })p
+0 1(        })p
+0 3(        return;)p
+0 4(})p
+0 6(void Microenvironment::compute_gradient_vector\( int n \))p
+0 7({)p
+0 8(        static double two_dx = mesh.dx;)p
+0 9(        static double two_dy = mesh.dy;)p
+0 10(        static double two_dz = mesh.dz;)p
+0 11(        static bool gradient_constants_defined = false;)p
+0 12(        std::vector<unsigned int> indices\(3,0\);)p
+0 14(        if\( gradient_constants_defined == false \))p
+0 15(        {)p
+0 16(                two_dx *= 2.0;)p
+0 17(                two_dy *= 2.0;)p
+0 18(                two_dz *= 2.0;)p
+0 19(                gradient_constants_defined = true;)p
+0 20(        })p
+0 22(        indices = cartesian_indices\( n \);)p
+0 24(        // d/dx)p
+0 25(        if\( indices[0] > 0 && indices[0] < mesh.x_coordinates.size\(\)-1 \))p
+0 26(        {)p
+0 27(                for\( unsigned int q=0; q < number_of_densities\(\) ; q++ \))p
+0 28(                {)p
+0 29(                        gradient_vectors[n][q][0] = \(*p_density_vectors\)[n+thoma)p
+0 30(s_i_jump][q];)p
+0 31(                        gradient_vectors[n][q][0] -= \(*p_density_vectors\)[n-thom)p
+0 32(as_i_jump][q];)p
+0 33(                        gradient_vectors[n][q][0] /= two_dx;)p
+0 34(                        gradient_vector_computed[n] = true;)p
+0 35(                })p
+0 36(        })p
+0 38(        // don't bother computing y and z component if there is no y-direction.)p
+0 39(\(1D\))p
+0 40(        if\( mesh.y_coordinates.size\(\) == 1 \))p
+0 41(        { return; })p
+0 43(        // d/dy)p
+0 44(        if\( indices[1] > 0 && indices[1] < mesh.y_coordinates.size\(\)-1 \))p
+0 45(        {)p
+0 46(                for\( unsigned int q=0; q < number_of_densities\(\) ; q++ \))p
+0 47(                {)p
+0 48(                        gradient_vectors[n][q][1] = \(*p_density_vectors\)[n+thoma)p
+0 49(s_j_jump][q];)p
+0 50(                        gradient_vectors[n][q][1] -= \(*p_density_vectors\)[n-thom)p
+0 51(as_j_jump][q];)p
+0 52(                        gradient_vectors[n][q][1] /= two_dy;)p
+0 53(                        gradient_vector_computed[n] = true;)p
+Endpage
+%%Page 25 25
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      25)H
+0 0(                })p
+0 1(        })p
+0 3(        // don't bother computing z component if there is no z-direction \(2D\))p
+0 4(        if\( mesh.z_coordinates.size\(\) == 1 \))p
+0 5(        { return; })p
+0 7(        // d/dz)p
+0 8(        if\( indices[2] > 0 && indices[2] < mesh.z_coordinates.size\(\)-1 \))p
+0 9(        {)p
+0 10(                for\( unsigned int q=0; q < number_of_densities\(\) ; q++ \))p
+0 11(                {)p
+0 12(                        gradient_vectors[n][q][2] = \(*p_density_vectors\)[n+thoma)p
+0 13(s_k_jump][q];)p
+0 14(                        gradient_vectors[n][q][2] -= \(*p_density_vectors\)[n-thom)p
+0 15(as_k_jump][q];)p
+0 16(                        gradient_vectors[n][q][2] /= two_dz;)p
+0 17(                        gradient_vector_computed[n] = true;)p
+0 18(                })p
+0 19(        })p
+0 21(        return;)p
+0 22(})p
+0 24(void Microenvironment::reset_all_gradient_vectors\( void \))p
+0 25({)p
+0 26(        for\( unsigned int k=0 ; k < mesh.voxels.size\(\) ; k++ \))p
+0 27(        {)p
+0 28(                for\( unsigned int i=0 ; i < number_of_densities\(\) ; i++ \))p
+0 29(                {)p
+0 30(                        \(gradient_vectors[k]\)[i].resize\( 3, 0.0 \);)p
+0 31(                })p
+0 32(        })p
+0 33(        gradient_vector_computed.assign\( mesh.voxels.size\(\) , false \);)p
+0 34(})p
+0 37(Microenvironment microenvironment;)p
+0 39(Microenvironment_Options::Microenvironment_Options\(\))p
+0 40({)p
+0 41(        use_oxygen_as_first_field = true;)p
+0 43(        if\( get_default_microenvironment\(\) != NULL \))p
+0 44(        {)p
+0 45(                pMicroenvironment = get_default_microenvironment\(\);)p
+0 46(        })p
+0 47(        else)p
+0 48(        {)p
+0 49(                pMicroenvironment = &microenvironment;)p
+0 50(                set_default_microenvironment\( pMicroenvironment \);)p
+0 51(        })p
+0 52(        name = "microenvironment";)p
+Endpage
+%%Page 26 26
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      26)H
+0 0(        time_units = "min";)p
+0 1(        spatial_units = "micron";)p
+0 2(        dx = 20;)p
+0 3(        dy = 20;)p
+0 4(        dz = 20;)p
+0 6(        outer_Dirichlet_conditions = false;)p
+0 7(        Dirichlet_condition_vector.assign\( pMicroenvironment->number_of_densitie)p
+0 8(s\(\) , 1.0 \);)p
+0 9(        Dirichlet_activation_vector.assign\( pMicroenvironment->number_of_densiti)p
+0 10(es\(\) , true \);)p
+0 12(        initial_condition_vector.resize\(0\); //  = Dirichlet_condition_vector;)p
+0 14(        // set a far-field value for oxygen \(assumed to be in the first field\))p
+0 15(        Dirichlet_condition_vector[0] = 38.0;)p
+0 17(        simulate_2D = false;)p
+0 19(        X_range.resize\(2,500.0\);)p
+0 20(        X_range[0] *= -1.0;)p
+0 22(        Y_range.resize\(2,500.0\);)p
+0 23(        Y_range[0] *= -1.0;)p
+0 25(        Z_range.resize\(2,500.0\);)p
+0 26(        Z_range[0] *= -1.0;)p
+0 28(        calculate_gradients = false;)p
+0 30(        track_internalized_substrates_in_each_agent = false;)p
+0 32(        Dirichlet_all.push_back\( true \);)p
+0 33(//      Dirichlet_interior.push_back\( true \);)p
+0 34(        Dirichlet_xmin.push_back\( false \);)p
+0 35(        Dirichlet_xmax.push_back\( false \);)p
+0 36(        Dirichlet_ymin.push_back\( false \);)p
+0 37(        Dirichlet_ymax.push_back\( false \);)p
+0 38(        Dirichlet_zmin.push_back\( false \);)p
+0 39(        Dirichlet_zmax.push_back\( false \);)p
+0 41(        default_microenvironment_options.Dirichlet_xmin_values.push_back\( 1.0 \);)p
+0 42(        default_microenvironment_options.Dirichlet_xmax_values.push_back\( 1.0 \);)p
+0 43(        default_microenvironment_options.Dirichlet_ymin_values.push_back\( 1.0 \);)p
+0 44(        default_microenvironment_options.Dirichlet_ymax_values.push_back\( 1.0 \);)p
+0 45(        default_microenvironment_options.Dirichlet_zmin_values.push_back\( 1.0 \);)p
+0 46(        default_microenvironment_options.Dirichlet_zmax_values.push_back\( 1.0 \);)p
+0 48(        return;)p
+0 49(})p
+0 51(Microenvironment_Options default_microenvironment_options;)p
+0 53(void initialize_microenvironment\( void \))p
+Endpage
+%%Page 27 27
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      27)H
+0 0({)p
+0 1(        // create and name a microenvironment;)p
+0 2(        microenvironment.name = default_microenvironment_options.name;)p
+0 3(        // register the diffusion solver)p
+0 4(        if\( default_microenvironment_options.simulate_2D == true \))p
+0 5(        {)p
+0 6(                microenvironment.diffusion_decay_solver = diffusion_decay_solver)p
+0 7(__constant_coefficients_LOD_2D;)p
+0 8(        })p
+0 9(        else)p
+0 10(        {)p
+0 11(                microenvironment.diffusion_decay_solver = diffusion_decay_solver)p
+0 12(__constant_coefficients_LOD_3D;)p
+0 13(        })p
+0 15(        // set the default substrate to oxygen \(with typical units of mmHg\))p
+0 16(        if\( default_microenvironment_options.use_oxygen_as_first_field == true \))p
+0 17(        {)p
+0 18(                microenvironment.set_density\(0, "oxygen" , "mmHg" \);)p
+0 19(                microenvironment.diffusion_coefficients[0] = 1e5;)p
+0 20(                microenvironment.decay_rates[0] = 0.1;)p
+0 21(        })p
+0 23(        // resize the microenvironment)p
+0 24(        if\( default_microenvironment_options.simulate_2D == true \))p
+0 25(        {)p
+0 26(                default_microenvironment_options.Z_range[0] = -default_microenvi)p
+0 27(ronment_options.dz/2.0;)p
+0 28(                default_microenvironment_options.Z_range[1] = default_microenvir)p
+0 29(onment_options.dz/2.0;)p
+0 30(        })p
+0 31(        microenvironment.resize_space\( default_microenvironment_options.X_range[)p
+0 32(0], default_microenvironment_options.X_range[1] ,)p
+0 33(                default_microenvironment_options.Y_range[0], default_microenviro)p
+0 34(nment_options.Y_range[1],)p
+0 35(                default_microenvironment_options.Z_range[0], default_microenviro)p
+0 36(nment_options.Z_range[1],)p
+0 37(                default_microenvironment_options.dx,default_microenvironment_opt)p
+0 38(ions.dy,default_microenvironment_options.dz \);)p
+0 40(        // set units)p
+0 41(        microenvironment.spatial_units = default_microenvironment_options.spatia)p
+0 42(l_units;)p
+0 43(        microenvironment.time_units = default_microenvironment_options.time_unit)p
+0 44(s;)p
+0 45(        microenvironment.mesh.units = default_microenvironment_options.spatial_u)p
+0 46(nits;)p
+0 48(        // set the initial densities to the values set in the initial_condition_)p
+0 49(vector)p
+0 51(        // if the initial condition vector has not been set, use the Dirichlet c)p
+0 52(ondition vector)p
+0 53(        if\( default_microenvironment_options.initial_condition_vector.size\(\) !=)p
+Endpage
+%%Page 28 28
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      28)H
+0 0(                microenvironment.number_of_densities\(\) \))p
+0 1(        {)p
+0 2(                std::cout << "BioFVM Warning: Initial conditions not set. " << s)p
+0 3(td::endl)p
+0 4(                                  << "                Using Dirichlet condition)p
+0 5(vector to set initial substrate values!" << std::endl)p
+0 6(                                  << "                In the future, set default)p
+0 7(_microenvironment_options.initial_condition_vector.")p
+0 8(                                  << std::endl << std::endl;)p
+0 9(                default_microenvironment_options.initial_condition_vector = defa)p
+0 10(ult_microenvironment_options.Dirichlet_condition_vector;)p
+0 11(        })p
+0 13(        // set the initial condition)p
+0 14(        for\( unsigned int n=0; n < microenvironment.number_of_voxels\(\) ; n++ \))p
+0 15(        { microenvironment.density_vector\(n\) = default_microenvironment_options.)p
+0 16(initial_condition_vector; })p
+0 18(        // now, figure out which sides have BCs \(for at least one substrate\):)p
+0 20(        bool xmin = false;)p
+0 21(        bool xmax = false;)p
+0 22(        bool ymin = false;)p
+0 23(        bool ymax = false;)p
+0 24(        bool zmin = false;)p
+0 25(        bool zmax = false;)p
+0 27(        if\( default_microenvironment_options.outer_Dirichlet_conditions == true)p
+0 28(\))p
+0 29(        {)p
+0 30(                for\( int n=0 ; n < microenvironment.number_of_densities\(\) ; n++)p
+0 31(\))p
+0 32(                {)p
+0 33(                        if\( default_microenvironment_options.Dirichlet_all[n] ||)p
+0 34(                                default_microenvironment_options.Dirichlet_xmin[)p
+0 35(n] \))p
+0 36(                                { xmin = true; })p
+0 38(                        if\( default_microenvironment_options.Dirichlet_all[n] ||)p
+0 39(                                default_microenvironment_options.Dirichlet_xmax[)p
+0 40(n] \))p
+0 41(                                { xmax = true; })p
+0 43(                        if\( default_microenvironment_options.Dirichlet_all[n] ||)p
+0 44(                                default_microenvironment_options.Dirichlet_ymin[)p
+0 45(n] \))p
+0 46(                                { ymin = true; })p
+0 48(                        if\( default_microenvironment_options.Dirichlet_all[n] ||)p
+0 49(                                default_microenvironment_options.Dirichlet_ymax[)p
+0 50(n] \))p
+0 51(                                { ymax = true; })p
+0 53(                        if\( default_microenvironment_options.Dirichlet_all[n] ||)p
+Endpage
+%%Page 29 29
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      29)H
+0 0(                                default_microenvironment_options.Dirichlet_zmin[)p
+0 1(n] \))p
+0 2(                                { zmin = true; })p
+0 4(                        if\( default_microenvironment_options.Dirichlet_all[n] ||)p
+0 5(                                default_microenvironment_options.Dirichlet_zmax[)p
+0 6(n] \))p
+0 7(                                { zmax = true; })p
+0 8(                })p
+0 10(                // add the Dirichlet nodes in the right places)p
+0 12(        })p
+0 13(        std::cout << "which boundaries?" << std::endl;)p
+0 14(        std::cout << xmin << " " << xmax << " " << ymin << " " << ymax << " " <<)p
+0 15( zmin << " " << zmax << std::endl;)p
+0 17(        // add the Dirichlet nodes in the right places)p
+0 18(        // now, go in and set the values)p
+0 19(        if\( default_microenvironment_options.outer_Dirichlet_conditions == true)p
+0 20(\))p
+0 21(        {)p
+0 22(                // set xmin if xmin = true or all = true)p
+0 23(                if\( xmin == true \))p
+0 24(                {)p
+0 25(                        for\( unsigned int k=0 ; k < microenvironment.mesh.z_coor)p
+0 26(dinates.size\(\) ; k++ \))p
+0 27(                        {)p
+0 28(                                int I = 0;)p
+0 29(                                // set Dirichlet conditions along the xmin outer)p
+0 30( edges)p
+0 31(                                for\( unsigned int j=0 ; j < microenvironment.mes)p
+0 32(h.y_coordinates.size\(\) ; j++ \))p
+0 33(                                {)p
+0 34(                                        // set the value)p
+0 35(                                        microenvironment.add_dirichlet_node\( mic)p
+0 36(roenvironment.voxel_index\(I,j,k\) , default_microenvironment_options.Dirichlet_xm)p
+0 37(in_values \);)p
+0 39(                                        // set the activation)p
+0 40(                                        microenvironment.set_substrate_dirichlet)p
+0 41(_activation\( microenvironment.voxel_index\(I,j,k\) ,)p
+0 42(                                        default_microenvironment_options.Dirichl)p
+0 43(et_xmin \);)p
+0 45(                                })p
+0 46(                        })p
+0 47(                })p
+0 49(                // set xmax if xmax = true or all = true)p
+0 50(                if\( xmax == true \))p
+0 51(                {)p
+0 52(                        for\( unsigned int k=0 ; k < microenvironment.mesh.z_coor)p
+0 53(dinates.size\(\) ; k++ \))p
+Endpage
+%%Page 30 30
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      30)H
+0 0(                        {)p
+0 1(                                int I = microenvironment.mesh.x_coordinates.size)p
+0 2(\(\)-1;;)p
+0 3(                                // set Dirichlet conditions along the xmax outer)p
+0 4( edges)p
+0 5(                                for\( unsigned int j=0 ; j < microenvironment.mes)p
+0 6(h.y_coordinates.size\(\) ; j++ \))p
+0 7(                                {)p
+0 8(                                        // set the values)p
+0 9(                                        microenvironment.add_dirichlet_node\( mic)p
+0 10(roenvironment.voxel_index\(I,j,k\) , default_microenvironment_options.Dirichlet_xm)p
+0 11(ax_values \);)p
+0 13(                                        // set the activation)p
+0 14(                                        microenvironment.set_substrate_dirichlet)p
+0 15(_activation\( microenvironment.voxel_index\(I,j,k\) ,)p
+0 16(                                        default_microenvironment_options.Dirichl)p
+0 17(et_xmax \);)p
+0 18(                                })p
+0 19(                        })p
+0 20(                })p
+0 22(                // set ymin if ymin = true or all = true)p
+0 23(                if\( ymin == true \))p
+0 24(                {)p
+0 25(                        for\( unsigned int k=0 ; k < microenvironment.mesh.z_coor)p
+0 26(dinates.size\(\) ; k++ \))p
+0 27(                        {)p
+0 28(                                int J = 0; // microenvironment.mesh.x_coordinate)p
+0 29(s.size\(\)-1;;)p
+0 30(                                // set Dirichlet conditions along the ymin outer)p
+0 31( edges)p
+0 32(                                for\( unsigned int i=0 ; i < microenvironment.mes)p
+0 33(h.x_coordinates.size\(\) ; i++ \))p
+0 34(                                {)p
+0 35(                                        // set the values)p
+0 36(                                        microenvironment.add_dirichlet_node\( mic)p
+0 37(roenvironment.voxel_index\(i,J,k\) , default_microenvironment_options.Dirichlet_ym)p
+0 38(in_values \);)p
+0 40(                                        // set the activation)p
+0 41(                                        microenvironment.set_substrate_dirichlet)p
+0 42(_activation\( microenvironment.voxel_index\(i,J,k\) ,)p
+0 43(                                        default_microenvironment_options.Dirichl)p
+0 44(et_ymin \);)p
+0 45(                                })p
+0 46(                        })p
+0 47(                })p
+0 49(                // set ymzx if ymax = true or all = true;)p
+0 50(                if\( ymax == true \))p
+0 51(                {)p
+0 52(                        for\( unsigned int k=0 ; k < microenvironment.mesh.z_coor)p
+0 53(dinates.size\(\) ; k++ \))p
+Endpage
+%%Page 31 31
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      31)H
+0 0(                        {)p
+0 1(                                int J = microenvironment.mesh.y_coordinates.size)p
+0 2(\(\)-1;;)p
+0 3(                                // set Dirichlet conditions along the ymin outer)p
+0 4( edges)p
+0 5(                                for\( unsigned int i=0 ; i < microenvironment.mes)p
+0 6(h.x_coordinates.size\(\) ; i++ \))p
+0 7(                                {)p
+0 8(                                        // set the value)p
+0 9(                                        microenvironment.add_dirichlet_node\( mic)p
+0 10(roenvironment.voxel_index\(i,J,k\) , default_microenvironment_options.Dirichlet_ym)p
+0 11(ax_values \);)p
+0 13(                                        // set the activation)p
+0 14(                                        microenvironment.set_substrate_dirichlet)p
+0 15(_activation\( microenvironment.voxel_index\(i,J,k\) ,)p
+0 16(                                        default_microenvironment_options.Dirichl)p
+0 17(et_ymax \);)p
+0 18(                                })p
+0 19(                        })p
+0 20(                })p
+0 22(                // if not 2D:)p
+0 23(                if\( default_microenvironment_options.simulate_2D == false \))p
+0 24(                {)p
+0 25(                        // set zmin if zmin = true or all = true)p
+0 26(                        if\( zmin == true \))p
+0 27(                        {)p
+0 28(                                for\( unsigned int j=0 ; j < microenvironment.mes)p
+0 29(h.y_coordinates.size\(\) ; j++ \))p
+0 30(                                {)p
+0 31(                                        int K = 0; // microenvironment.mesh.z_co)p
+0 32(ordinates.size\(\)-1;;)p
+0 33(                                        // set Dirichlet conditions along the ym)p
+0 34(in outer edges)p
+0 35(                                        for\( unsigned int i=0 ; i < microenviron)p
+0 36(ment.mesh.x_coordinates.size\(\) ; i++ \))p
+0 37(                                        {)p
+0 38(                                                // set the value)p
+0 39(                                                microenvironment.add_dirichlet_n)p
+0 40(ode\( microenvironment.voxel_index\(i,j,K\) , default_microenvironment_options.Diri)p
+0 41(chlet_zmin_values \);)p
+0 43(                                                // set the activation)p
+0 44(                                                microenvironment.set_substrate_d)p
+0 45(irichlet_activation\( microenvironment.voxel_index\(i,j,K\) ,)p
+0 46(                                                default_microenvironment_options)p
+0 47(.Dirichlet_zmin \);)p
+0 48(                                        })p
+0 49(                                })p
+0 50(                        })p
+0 52(                        // set zmax if zmax = true or all = true)p
+0 53(                        if\( zmax == true \))p
+Endpage
+%%Page 32 32
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      32)H
+0 0(                        {)p
+0 1(                                for\( unsigned int j=0 ; j < microenvironment.mes)p
+0 2(h.y_coordinates.size\(\) ; j++ \))p
+0 3(                                {)p
+0 4(                                        int K = microenvironment.mesh.z_coordina)p
+0 5(tes.size\(\)-1;;)p
+0 6(                                        // set Dirichlet conditions along the ym)p
+0 7(in outer edges)p
+0 8(                                        for\( unsigned int i=0 ; i < microenviron)p
+0 9(ment.mesh.x_coordinates.size\(\) ; i++ \))p
+0 10(                                        {)p
+0 11(                                                // set the value)p
+0 12(                                                microenvironment.add_dirichlet_n)p
+0 13(ode\( microenvironment.voxel_index\(i,j,K\) , default_microenvironment_options.Diri)p
+0 14(chlet_zmax_values \);)p
+0 16(                                                // set the activation)p
+0 17(                                                microenvironment.set_substrate_d)p
+0 18(irichlet_activation\( microenvironment.voxel_index\(i,j,K\) ,)p
+0 19(                                                default_microenvironment_options)p
+0 20(.Dirichlet_zmax \);)p
+0 21(                                        })p
+0 22(                                })p
+0 23(                        })p
+0 24(                })p
+0 26(        })p
+0 28(/*)p
+0 29(        if\( default_microenvironment_options.outer_Dirichlet_conditions == true)p
+0 30(\))p
+0 31(        {)p
+0 33(                for\( unsigned int k=0 ; k < microenvironment.mesh.z_coordinates.)p
+0 34(size\(\) ; k++ \))p
+0 35(                {)p
+0 36(                        // set Dirichlet conditions along the 4 outer edges)p
+0 37(                        for\( unsigned int i=0 ; i < microenvironment.mesh.x_coor)p
+0 38(dinates.size\(\) ; i++ \))p
+0 39(                        {)p
+0 40(                                int J = microenvironment.mesh.y_coordinates.size)p
+0 41(\(\)-1;)p
+0 42(                                microenvironment.add_dirichlet_node\( microenviro)p
+0 43(nment.voxel_index\(i,0,k\) , default_microenvironment_options.Dirichlet_condition_)p
+0 44(vector \);)p
+0 45(                                microenvironment.add_dirichlet_node\( microenviro)p
+0 46(nment.voxel_index\(i,J,k\) , default_microenvironment_options.Dirichlet_condition_)p
+0 47(vector \);)p
+0 48(                        })p
+0 49(                        int I = microenvironment.mesh.x_coordinates.size\(\)-1;)p
+0 50(                        for\( unsigned int j=1; j < microenvironment.mesh.y_coord)p
+0 51(inates.size\(\)-1 ; j++ \))p
+0 52(                        {)p
+0 53(                                microenvironment.add_dirichlet_node\( microenviro)p
+Endpage
+%%Page 33 33
+Startpage
+(BioFVM_microenvironment.cpp         Mon Jul 18 21:44:38 2022
+      33)H
+0 0(nment.voxel_index\(0,j,k\) , default_microenvironment_options.Dirichlet_condition_)p
+0 1(vector \);)p
+0 2(                                microenvironment.add_dirichlet_node\( microenviro)p
+0 3(nment.voxel_index\(I,j,k\) , default_microenvironment_options.Dirichlet_condition_)p
+0 4(vector \);)p
+0 5(                        })p
+0 6(                })p
+0 7(                // if 3-D, also along the corresponding additional faces)p
+0 8(                if\( default_microenvironment_options.simulate_2D == false \))p
+0 9(                {)p
+0 10(                        int K = microenvironment.mesh.z_coordinates.size\(\)-1;)p
+0 11(                        for\( unsigned int j=1 ; j < microenvironment.mesh.y_coor)p
+0 12(dinates.size\(\)-1 ; j++ \))p
+0 13(                        {)p
+0 14(                                for\( unsigned int i=1; i < microenvironment.mesh)p
+0 15(.x_coordinates.size\(\)-1 ; i++ \))p
+0 16(                                {)p
+0 17(                                        microenvironment.add_dirichlet_node\( mic)p
+0 18(roenvironment.voxel_index\(i,j,0\) , default_microenvironment_options.Dirichlet_co)p
+0 19(ndition_vector \);)p
+0 20(                                        microenvironment.add_dirichlet_node\( mic)p
+0 21(roenvironment.voxel_index\(i,j,K\) , default_microenvironment_options.Dirichlet_co)p
+0 22(ndition_vector \);)p
+0 23(                                })p
+0 24(                        })p
+0 25(                })p
+0 27(        })p
+0 28(*/)p
+0 30(        // set the Dirichlet condition activation vector to match the microenvir)p
+0 31(onment options)p
+0 32(        for\( int i=0 ; i < default_microenvironment_options.Dirichlet_activation)p
+0 33(_vector.size\(\); i++ \))p
+0 34(        {)p
+0 35(                microenvironment.set_substrate_dirichlet_activation\( i , default)p
+0 36(_microenvironment_options.Dirichlet_activation_vector[i] \);)p
+0 37(        })p
+0 39(        microenvironment.display_information\( std::cout \);)p
+0 40(        return;)p
+0 41(})p
+0 43(};)p
+Endpage
+%%Trailer
+PSPend
